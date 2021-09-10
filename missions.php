@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
 File: 		missions.php
 Coder:		Levi Meahan
 Created:	05/04/2014
@@ -16,7 +16,7 @@ function missions() {
 
 	global $self_link;
 	global $RANK_NAMES;
-	
+
 	if($player->mission_id) {
 		if($_GET['cancel_mission']) {
 			$player->mission_id = 0;
@@ -31,10 +31,10 @@ function missions() {
 		else {
 			$mission = new Mission($player->mission_id, $player);
 		}
-		
+
 		// Check status/stage
 		$mission_status = 1;
-		 
+
 
 		if($_GET['retreat']) {
 			$battle_id = 0;
@@ -66,11 +66,11 @@ function missions() {
 						$_SESSION['ai_id'] = $opponent->id;
 						$player->last_ai = time();
 						$player->battle_id = -1;
-					}	
-					
+					}
+
 					require("battleCore.php");
 					$winner = battleAI($player, $opponent);
-					
+
 					if(!$winner) {
 						return true;
 					}
@@ -86,7 +86,7 @@ function missions() {
 							if($money_gain < 5) {
 								$money_gain = 5;
 							}
-							
+
 							if($_SESSION['ai_defeated'] > 1 && $_SESSION['ai_defeated'] % 5 == 0){
 								$player->mission_stage['stage_id'] += 1;
 							}
@@ -108,7 +108,7 @@ function missions() {
 						else {
 							$player->mission_id = 0;
 							$player->mission_stage = '';
-					
+
 							$system->printMessage();
 							return false;
 						}
@@ -116,11 +116,11 @@ function missions() {
 						unset($_SESSION['ai_health']);
 						unset($_SESSION['player_jutsu_used']);
 						unset($_SESSION['battle_page']);
-							
+
 					}
 					else if($winner == 1) {		// Player win
 						$player->battle_id = 0;
-						
+
 						// Team or solo
 						if($mission->mission_type == 3) {
 							$mission_status = $mission->nextTeamStage($player->mission_stage['stage_id'] + 1);
@@ -133,10 +133,10 @@ function missions() {
 						echo "<table class='table'><tr><th>Battle Results</th></tr>
 						<tr><td>You have been defeated. You have failed your mission.
 						</td></tr></table>";
-						
+
 						$player->mission_id = 0;
 						$player->mission_stage = '';
-						
+
 						$player->ai_losses++;
 						$player->battle_id = 0;
 					}
@@ -144,12 +144,12 @@ function missions() {
 						echo "<table class='table'><tr><th>Battle Results</th></tr>
 						<tr><td>The battle ended in a draw. You have failed your mission.
 						</td></tr></table>";
-						
+
 						$player->mission_id = 0;
 						$player->mission_stage = '';
 						$player->battle_id = 0;
 					}
-					
+
 					unset($_SESSION['ai_id']);
 					unset($_SESSION['ai_health']);
 					unset($_SESSION['player_jutsu_used']);
@@ -158,11 +158,11 @@ function missions() {
 				else {
 					$player->mission_id = 0;
 					$player->mission_stage = '';
-					
+
 					$system->printMessage();
 					return false;
 				}
-				
+
 			}
 		}
 
@@ -172,12 +172,12 @@ function missions() {
 			if($mission->mission_type == 4) {
 				$player->mission_id = 0;
 				$player->mission_stage = '';
-				
+
 				// Jonin exam
 				if($mission->mission_id == 10) {
 					$_SESSION['exam_stage'] = 2;
 					$self_link = $link . '?id=1';
-					
+
 					require_once("levelUp.php");
 					rankUp();
 					return true;
@@ -188,15 +188,15 @@ function missions() {
 				$player->money += $mission->money;
 				$player->mission_id = 0;
 				$player->mission_stage = '';
-				
+
 				$team_points = 2;
 				// Process team rewards if this is the first completing player, then unset the mission ID
 				if($player->team['mission_id']) {
-					$system->query("UPDATE `teams` SET 
-						`points`=`points` + $team_points, `monthly_points`=`monthly_points` + $team_points,`mission_id`=0 
+					$system->query("UPDATE `teams` SET
+						`points`=`points` + $team_points, `monthly_points`=`monthly_points` + $team_points,`mission_id`=0
 						WHERE `team_id`={$player->team['id']}");
 				}
-				
+
 				echo "<table class='table'><tr><th>Current Mission</th></tr>
 				<tr><td style='text-align:center;'><span style='font-weight:bold;'>$mission->name Complete</span><br />
 				Your team has completed the mission.<br />
@@ -211,10 +211,10 @@ function missions() {
 				$player->mission_id = 0;
 				$player->mission_stage = '';
 				$player->last_ai = time();
-				
+
 				$point_gain = 1;
 				$system->query("UPDATE `clans` SET `points`=`points`+$point_gain WHERE `clan_id`={$player->clan['id']} LIMIT 1");
-				
+
 				echo "<table class='table'><tr><th>Current Mission</th></tr>
 				<tr><td style='text-align:center;'><span style='font-weight:bold;'>$mission->name Complete</span><br />
 				You have completed your mission for clan {$player->clan['name']}.<br />
@@ -225,17 +225,17 @@ function missions() {
 			}
 			// Village/Survival mission
 			else {
-				
+
 				if($mission->mission_type == 5){
 					$mission->money = $_SESSION['mission_money'];
 					unset($_SESSION['mission_money']);
 				}
-			
+
 				$player->money += $mission->money;
 				$player->mission_id = 0;
 				$player->mission_stage = '';
 				$player->last_ai = time();
-				
+
 				echo "<table class='table'><tr><th>Current Mission</th></tr>
 				<tr><td style='text-align:center;'><span style='font-weight:bold;'>$mission->name Complete</span><br />
 				You have completed your mission.<br />";
@@ -255,10 +255,10 @@ function missions() {
 		// Display mission details
 		else if($player->mission_id){
 			echo "<table class='table'><tr><th>Current Mission (<a href='$self_link&cancel_mission=1'>Abandon Mission</a>)</th></tr>
-			<tr><td style='text-align:center;'><span style='font-weight:bold;'>" . 
+			<tr><td style='text-align:center;'><span style='font-weight:bold;'>" .
 				($mission->mission_type == 3 ? '[' . $player->team['name'] . '] ' : '') . "$mission->name</span><br />" .
 				$player->mission_stage['description'];
-			
+
 			// Display counts of team/solo mission
 			if($mission->mission_type == 3 && $mission->team['mission_stage']['count_needed']) {
 				echo ' (' . $mission->team['mission_stage']['count'] . '/' . $mission->team['mission_stage']['count_needed'] . ' complete)';
@@ -274,14 +274,58 @@ function missions() {
 					echo "| <a href='$self_link&retreat=1'>Retreat</a>";
 				}
 			}
-			
+
 			echo "<br />
 			</td></tr></table>";
 		}
 		return true;
 	}
-	
-	
+
+	/*Cextra - Daily Mission*/
+	//uses class from (createSubmenu) dailyMission.php | to set up UserInterface and Perform Check Logic
+	require_once("menufactory/CreateDailyMission.php");
+
+	/*
+	daily_mission: True/False; Is Character on a Daily Mission?
+	daily_mission_time: LongInt; Holds DateTime to compare past mission start times
+	daily_mission_ai: SmallInt; Holds remaining AI needed to finish mission
+
+	User.db -> ai_wins: Int; Compares mission requirements
+	*/
+	//Fake Variables
+	$daily_mission_started = true;
+	$daily_mission_done = true; //set when user finishes AI
+	$daily_mission_start_time = 1631248611; //time(); //current time strval($daily_mission_time): String
+	$daily_mission_ai = 0;
+	echo $daily_mission_start_time;
+	echo "<br>".time();
+
+	//Create and Displays Submenu for Daily Missions
+	//CreateMissionSubmenu(MenuTitle: String, onMissionAlready: bool, StartTime: LongInt, aiKilled: int);
+	$DailyMission = new CreateDailyMission("Start Daily Mission", $daily_mission_started, $daily_mission_start_time, $daily_mission_ai);
+
+	if($DailyMission->onMissionAlready){
+		if($daily_mission_done){
+			//reward user
+			//set daily_mission = false, set daily_mission_done = true;
+		} else {
+			$DailyMission->still_tasks_left(); //displays HTML
+			//$DailyMission->checkifdone($daily_mission_ai) - if true set mission to done/refresh myb?
+		}
+
+	} else {//not on mission and less than 24 hours since last one
+		if((time() - $daily_mission_start_time) > 86400)/*86400 = 24 hours in seconds*/{
+			//set $daily_mission_done = false;
+			$DailyMission->start_task(); //displays HTML
+			//set SQL variables here OR set them via <a> link
+		} else {
+			$DailyMission->comebacklater();
+		}
+	}
+
+	/*Cextra - Daily Mission*/
+
+
 	$max_mission_rank = 1;
 	if($player->rank == 3) {
 		$max_mission_rank = 3;
@@ -295,20 +339,20 @@ function missions() {
 	}
 	//End
 	$mission_rank_names = array(1 => 'D-Rank', 2 => 'C-Rank', 3 => 'B-Rank', 4 => 'A-Rank', 5 => 'S-Rank');
-	
+
 	$result = $system->query("SELECT `mission_id`, `name`, `rank` FROM `missions` WHERE `mission_type`=1 OR `mission_type`=5 AND `rank` <= $max_mission_rank");
 	if($system->db_num_rows == 0) {
 		$system->message("No missions available!");
 		$system->printMessage();
 		return false;
 	}
-	
+
 	$missions = array();
 	while($row = $system->db_fetch($result)) {
 		$missions[$row['mission_id']] = $row;
 	}
-	
-	
+
+
 	// Sub-menu
 	echo "<div class='submenu'>
 	<ul class='submenu'>";
@@ -320,7 +364,7 @@ function missions() {
 	echo "</ul>
 	</div>
 	<div class='submenuMargin'></div>";
-	
+
 	// Start mission
 	if($_GET['start_mission']) {
 		$mission_id = $_GET['start_mission'];
@@ -331,25 +375,25 @@ function missions() {
 			if($player->mission_id) {
 				throw new Exception("You are already on a mission!");
 			}
-		
+
 			$fight_timer = 20;
 			if($player->last_ai > time() - $fight_timer) {
 				throw new Exception("Please wait " . ($player->last_ai - (time() - $fight_timer)) . " more seconds!");
 			}
-		
+
 			$mission = new Mission($mission_id, $player);
-		
+
 			$player->mission_id = $mission_id;
 			missions();
 			return true;
-			
+
 		} catch (Exception $e) {
 			$system->message($e->getMessage());
 		}
-		
+
 	}
-	
-	
+
+
 	// Display missions
 	$system->printMessage();
 	$view = $max_mission_rank;
@@ -370,5 +414,13 @@ function missions() {
 		echo "<a href='$self_link&start_mission=$id'><p class='button' style='margin:5px;'>" . $mission['name'] . "</p></a><br />";
 	}
 	echo "</td></tr></table>";
+
+
+	//uses asbtract class from (createSubmenu) dailyMission.php | to set up UserInterface and perform logic
+	require_once("menufactory/dailyMission.php");
+
+	/*Cextra Daily Mission*/
+	createSubmenu::submenu();
+	/*Cextra Daily Mission*/
 	return true;
 }
