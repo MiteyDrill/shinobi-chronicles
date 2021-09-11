@@ -35,12 +35,14 @@ a:hover{
 #container{
 	width: 100%;
 }
+
 #chatMessage{
 	width: 100% !important;
 	height: 30% !important;
 
 	font-size: 1.2em !important;
 }
+
 #menu{
 	display: inline-block;
 	width: 100%;
