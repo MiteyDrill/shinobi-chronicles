@@ -69,16 +69,26 @@
 <div class='submenuMargin'></div>
 
 <?php $system->printMessage(); ?>
+
+<!-- PLAYER DISPLAYS -->
 <table class='table'>
     <tr>
         <th style='width:50%;'>
-            <a href='<?= $system->links['members'] ?>&user=<?= $player->getName() ?>' style='text-decoration:none'><?= $player->getName() ?></a>
+            <a href='<?= $system->links['members'] ?>&user=<?= $player->getName() ?>'
+               style='text-decoration:none'
+            >
+                <?= $player->getName() ?>
+            </a>
         </th>
         <th style='width:50%;'>
             <?php if($opponent instanceof AI): ?>
                 <?= $opponent->getName() ?>
             <?php else: ?>
-                <a href='<?= $system->links['members'] ?>&user=<?= $opponent->getName() ?>' style='text-decoration:none'><?= $opponent->getName() ?></a>
+                <a href='<?= $system->links['members'] ?>&user=<?= $opponent->getName() ?>'
+                   style='text-decoration:none'
+                >
+                    <?= $opponent->getName() ?>
+                </a>
             <?php endif; ?>
         </th>
     </tr>
@@ -102,6 +112,14 @@
         <label style='width:80px;'>Health:</label>
         <?= sprintf("%.2f", $opponent->health) ?> / <?= sprintf("%.2f", $opponent->max_health) ?><br />
         <div class='resourceBarOuter'><div class='healthFill' style='width:<?= $opponent_health_percent ?>%;'></div></div>
+    </td></tr>
+</table>
+
+<!-- Battle field -->
+<table class='table'>
+    <tr><th>Field</th></tr>
+    <tr><td>
+        <?php require 'templates/battle/battle_field.php'; ?>
     </td></tr>
 </table>
 
