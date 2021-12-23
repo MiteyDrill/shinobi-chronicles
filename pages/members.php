@@ -244,7 +244,7 @@ function members() {
             if($player->isHeadAdmin()) {
                 echo "<label style='width:6.5em;'>PvP losses:</label>	$viewUser->pvp_losses<br />";
             }
-			echo "<label style='width:6.5em;'>AI wins:</label> $viewUser->ai_wins<br />
+			echo "<label style='width:6.5em;'>NPC wins:</label> $viewUser->ai_wins<br />
 			</td></tr>";
 
 			//send message/money/ak
@@ -332,8 +332,8 @@ function members() {
 							echo "Last chat post: " . System::timeRemaining(time() - $last_post, 'long') . " ago<br />";
 						}
 
-						// Last AI
-						echo "Last AI battle started: " . System::timeRemaining(time() - $viewUser->last_ai, 'short') . " ago<br />";
+						// Last NPC
+						echo "Last NPC battle started: " . System::timeRemaining(time() - $viewUser->last_ai, 'short') . " ago<br />";
 
 						// Current training
 						$display = '';

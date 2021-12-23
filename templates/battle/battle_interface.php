@@ -25,9 +25,28 @@
         $battle_text = $system->html_parse(stripslashes($battle->battle_text));
         $battle_text = str_replace(array('[br]', '[hr]'), array('<br />', '<hr />'), $battle_text);
     }
+
+    require 'templates/battle/resource_bar.php';
 ?>
 
 <style type='text/css'>
+    .fighterDisplay {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+    }
+    .fighterDisplay.opponent {
+        flex-direction: row-reverse;
+    }
+    .avatarContainer {
+        width: 100px;
+        height: 100px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.1);
+    }
     .playerAvatar {
         display:block;
         margin: auto;
@@ -39,25 +58,6 @@
         margin:auto;
         max-width:<?= $opponent_avatar_size ?>;
         max-height:<?= $opponent_avatar_size ?>;
-    }
-
-    .resourceBarOuter {
-        height:6px;
-        width:250px;
-        border-style:solid;
-        border-width:1px;
-    }
-    .healthFill {
-        background-color:#C00000;
-        height:6px;
-    }
-    .chakraFill {
-        background-color:#0000B0;
-        height:6px;
-    }
-    .staminaFill {
-        background-color:#00B000;
-        height:6px;
     }
 </style>
 
@@ -81,7 +81,7 @@
             </a>
         </th>
         <th style='width:50%;'>
-            <?php if($opponent instanceof AI): ?>
+            <?php if($opponent instanceof NPC): ?>
                 <?= $opponent->getName() ?>
             <?php else: ?>
                 <a href='<?= $system->links['members'] ?>&user=<?= $opponent->getName() ?>'
@@ -93,32 +93,30 @@
         </th>
     </tr>
     <tr><td>
-        <img src='<?= $player->avatar_link ?>' class='playerAvatar' />
-        <label style='width:80px;'>Health:</label>
-            <?= sprintf("%.2f", $player->health) ?> / <?= sprintf("%.2f", $player->max_health) ?><br />
-        <div class='resourceBarOuter'><div class='healthFill' style='width:<?= $health_percent ?>%;'></div></div>
-
-        <?php if(!$battleManager->spectate): ?>
-            <label style='width:80px;'>Chakra:</label>
-            <?= sprintf("%.2f", $player->chakra) ?> / <?= sprintf("%.2f", $player->max_chakra) ?><br />
-            <div class='resourceBarOuter'><div class='chakraFill' style='width:<?= $chakra_percent ?>%;'></div></div>
-            <label style='width:80px;'>Stamina:</label>
-            <?= sprintf("%.2f", $player->stamina) ?> / <?= sprintf("%.2f", $player->max_stamina) ?><br />
-            <div class='resourceBarOuter'><div class='staminaFill' style='width:<?= $stamina_percent ?>%;'></div></div>
-        <?php endif; ?>
+        <div class='fighterDisplay'>
+            <div class='avatarContainer'>
+                <img src='<?= $player->avatar_link ?>' class='playerAvatar' />
+            </div>
+            <div class='resourceBars'>
+                <?php resourceBar($player->health, $player->max_health, 'health') ?>
+                <?php if(!$battleManager->spectate): ?>
+                    <?php resourceBar($player->chakra, $player->max_chakra, 'chakra') ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </td>
     <td>
-        <img src='<?= $opponent->avatar_link ?>' class='opponentAvatar' />
-        <label style='width:80px;'>Health:</label>
-        <?= sprintf("%.2f", $opponent->health) ?> / <?= sprintf("%.2f", $opponent->max_health) ?><br />
-        <div class='resourceBarOuter'><div class='healthFill' style='width:<?= $opponent_health_percent ?>%;'></div></div>
+        <div class='fighterDisplay opponent'>
+            <div class='avatarContainer'>
+                <img src='<?= $opponent->avatar_link ?>' class='opponentAvatar' />
+            </div>
+            <div class='resourceBars'>
+                <?php resourceBar($opponent->health, $opponent->max_health,'health') ?>
+            </div>
+        </div>
     </td></tr>
-</table>
-
-<!-- Battle field -->
-<table class='table'>
-    <tr><th>Field</th></tr>
-    <tr><td>
+    <!-- Battle field -->
+    <tr><td colspan='2'>
         <?php require 'templates/battle/battle_field.php'; ?>
     </td></tr>
 </table>

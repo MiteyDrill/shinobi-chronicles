@@ -333,7 +333,7 @@ abstract class Fighter {
         }
 
         $def_multiplier = 0.003;
-        if($this instanceof AI) {
+        if($this instanceof NPC) {
             $def_multiplier = 0.001;
         }
 
@@ -354,7 +354,7 @@ abstract class Fighter {
                 error_log("Invalid defense type! {$defense_type}");
         }
 
-        if($this instanceof AI && $defense_type == 'genjutsu') {
+        if($this instanceof NPC && $defense_type == 'genjutsu') {
             $defense *= 0.8;
         }
 

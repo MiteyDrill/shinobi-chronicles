@@ -97,7 +97,7 @@ function adminPanel() {
         $page = '';
     }
 
-    // Create AI
+    // Create NPC
     if($page == 'create_ai') {
         /* Variables
         -ai_id
@@ -138,10 +138,10 @@ function adminPanel() {
                 $query = "INSERT INTO `ai_opponents` ($column_names) VALUES ($column_data)";
                 $system->query($query);
                 if($system->db_last_affected_rows == 1) {
-                    $system->message("AI created!");
+                    $system->message("NPC created!");
                 }
                 else {
-                    throw new Exception("Error creating AI!");
+                    throw new Exception("Error creating NPC!");
                 }
             } catch(Exception $e) {
                 $system->message($e->getMessage());
@@ -155,7 +155,7 @@ function adminPanel() {
         else {
             formPreloadData($variables, $data, false);
         }
-        echo "<table class='table'><tr><th>Create AI</th></tr>
+        echo "<table class='table'><tr><th>Create NPC</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_ai' method='post'>
 		<style type='text/css'>
@@ -573,17 +573,17 @@ function adminPanel() {
 		</form>
 		</td></tr></table>";
     }
-    // Edit AI
+    // Edit NPC
     else if($page == 'edit_ai') {
         /* Variables */
         $variables =& $constraints['ai'];
         $select_ai = true;
-        // Validate AI id
+        // Validate NPC id
         if($_POST['ai_id']) {
             $ai_id = (int)$system->clean($_POST['ai_id']);
             $result = $system->query("SELECT * FROM `ai_opponents` WHERE `ai_id`='$ai_id'");
             if($system->db_last_num_rows == 0) {
-                $system->message("Invalid AI!");
+                $system->message("Invalid NPC!");
                 $system->printMessage();
             }
             else {
@@ -612,7 +612,7 @@ function adminPanel() {
                 $query .= "WHERE `ai_id`='$ai_id'";
                 $system->query($query);
                 if($system->db_last_affected_rows == 1) {
-                    $system->message("AI " . $data['name'] . " has been edited!");
+                    $system->message("NPC " . $data['name'] . " has been edited!");
                     $select_ai = true;
                 }
                 else {
@@ -627,7 +627,7 @@ function adminPanel() {
         // Form for editing data
         if($ai_data && !$select_ai) {
             $data =& $ai_data;
-            echo "<table class='table'><tr><th>Edit AI (" . stripslashes($ai_data['name']) . ")</th></tr>
+            echo "<table class='table'><tr><th>Edit NPC (" . stripslashes($ai_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_ai' method='post'>
 			<style type='text/css'>
@@ -646,7 +646,7 @@ function adminPanel() {
         // Show form for selecting ID
         if($select_ai) {
             $result = $system->query("SELECT `ai_id`, `name` FROM `ai_opponents`");
-            echo "<table class='table'><tr><th>Select AI</th></tr>
+            echo "<table class='table'><tr><th>Select NPC</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_ai' method='post'>
 			<select name='ai_id'>";
@@ -1017,7 +1017,7 @@ function adminPanel() {
         /* Variables */
         $variables =& $constraints['bloodline'];
         $select_content = true;
-        // Validate AI id
+        // Validate NPC id
         if($_POST[$content_name . '_id']) {
             $content_id = (int)$system->clean($_POST[$content_name . '_id']);
             $result = $system->query("SELECT * FROM `{$table_name}` WHERE `{$content_name}_id`='$content_id'");
@@ -1096,7 +1096,7 @@ function adminPanel() {
 			</td></tr></table>";
         }
     }
-    // Edit AI
+    // Edit NPC
     else if($page == 'edit_rank') {
         $table_name = 'ranks';
         $content_name = 'rank';
@@ -1191,7 +1191,7 @@ function adminPanel() {
         $variables =& $constraints['edit_clan'];
 
         $select_content = true;
-        // Validate AI id
+        // Validate NPC id
         if($_POST[$content_name . '_id']) {
             $content_id = (int)$system->clean($_POST[$content_name . '_id']);
             $result = $system->query("SELECT * FROM `{$table_name}` WHERE `{$content_name}_id`='$content_id'");
@@ -1280,7 +1280,7 @@ function adminPanel() {
         $variables =& $constraints['team'];
 
         $select_content = true;
-        // Validate AI id
+        // Validate NPC id
         if($_POST[$content_name . '_id']) {
             $content_id = (int)$system->clean($_POST[$content_name . '_id']);
             $result = $system->query("SELECT * FROM `{$table_name}` WHERE `{$content_name}_id`='$content_id'");
