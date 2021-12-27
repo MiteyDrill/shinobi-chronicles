@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\Pure;
+
 abstract class Fighter {
     const BASE_OFFENSE = 35;
 
@@ -176,6 +178,7 @@ abstract class Fighter {
         }
     }
     
+    #[Pure]
     public function getDebuffResist(): float {
         $willpower = ($this->willpower + $this->willpower_boost - $this->willpower_nerf);
 
@@ -203,7 +206,7 @@ abstract class Fighter {
      * @return float|int
      * @throws Exception
      */
-    public function calcDamage(Jutsu $attack, bool $disable_randomness = false) {
+    public function calcDamage(Jutsu $attack, bool $disable_randomness = false): float|int {
         if($this->system->debug['damage'])  {
             echo "Debugging damage for {$this->getName()}<br />";
         }
@@ -306,7 +309,7 @@ abstract class Fighter {
      * @param bool   $residual_damage
      * @return float|int
      */
-    public function calcDamageTaken($raw_damage, string $defense_type, bool $residual_damage = false) {
+    public function calcDamageTaken($raw_damage, string $defense_type, bool $residual_damage = false): float|int {
         $defense = 50 * (1 + $this->defense_boost);
 
         if($defense <= 0) {
