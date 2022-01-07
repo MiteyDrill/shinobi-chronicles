@@ -313,17 +313,22 @@ $constraints['jutsu'] = [
     ],
     'use_type' => [
         'data_type' => 'string',
-        'input_type' => 'radio',
-        'options' => [Jutsu::USE_TYPE_PHYSICAL, Jutsu::USE_TYPE_PROJECTILE, Jutsu::USE_TYPE_BUFF, Jutsu::USE_TYPE_BARRIER],
+        'input_type' => 'select',
+        'options' => Jutsu::$use_types,
+    ],
+    'target_type' => [
+        'data_type' => 'string',
+        'input_type' => 'select',
+        'options' => [Jutsu::TARGET_TYPE_FIGHTER_ID, Jutsu::TARGET_TYPE_TILE, Jutsu::TARGET_TYPE_DIRECTION],
     ],
     'jutsu_type' => [
         'data_type' => 'string',
-        'input_type' => 'radio',
+        'input_type' => 'select',
         'options' => [Jutsu::TYPE_NINJUTSU, Jutsu::TYPE_TAIJUTSU, Jutsu::TYPE_GENJUTSU],
     ],
     'purchase_type' => [
         'data_type' => 'int',
-        'input_type' => 'radio',
+        'input_type' => 'select',
         'options' => [
             Jutsu::PURCHASE_TYPE_DEFAULT => 'default',
             Jutsu::PURCHASE_TYPE_PURCHASEABLE => 'purchasable',
@@ -332,7 +337,7 @@ $constraints['jutsu'] = [
     ],
     'effect' => [
         'data_type' => 'string',
-        'input_type' => 'radio',
+        'input_type' => 'select',
         'options' => $jutsu_effects,
         'not_required_value' => 'none',
     ],
@@ -433,12 +438,12 @@ $constraints['bloodline'] = [
     ],
     'rank' => [
         'data_type' => 'int',
-        'input_type' => 'radio',
+        'input_type' => 'select',
         'options' => [5 => 'Admin', 4 => 'Lesser', 3 => 'Common', 2 => 'Elite', 1 => 'Legendary'],
     ],
     'village' => [
         'data_type' => 'string',
-        'input_type' => 'radio',
+        'input_type' => 'select',
         'options' => ['Stone', 'Cloud', 'Leaf', 'Sand', 'Mist'],
     ],
     'passive_boosts' => [
@@ -451,7 +456,7 @@ $constraints['bloodline'] = [
             ],
             'effect' => [
                 'data_type' => 'string',
-                'input_type' => 'radio',
+                'input_type' => 'select',
                 'options' => $passive_boosts,
             ],
             'remove' => [
@@ -469,7 +474,7 @@ $constraints['bloodline'] = [
             ],
             'effect' => [
                 'data_type' => 'string',
-                'input_type' => 'radio',
+                'input_type' => 'select',
                 'options' => $combat_boosts,
             ],
             'remove' => [
