@@ -28,9 +28,13 @@ function formPreloadData($variables, &$data, $post = true, $post_array = false) 
     }
 }
 
-// Throws exception if any validation error
+/**
+ * @param      $variables
+ * @param      $data
+ * @param null $content_id
+ * @throws Exception if any validation error
+ */
 function validateFormData($variables, &$data, $content_id = null) {
-    global $system;
     foreach($variables as $var_name => $variable) {
         if(isset($_POST[$var_name])) {
             if(isset($variable['count']) or is_array(reset($variable))) {
@@ -170,12 +174,15 @@ function displayFormFields($variables, $data, $input_name_prefix = ''): bool {
                     $name = $var_name . '[' . $i . ']';
                     echo "<span style='display:block;margin-top:10px;font-weight:bold;'>#" . ($i + 1) .
                         ": <button onclick='$(\"#" . $var_name . '_' . $i . "\").toggle();return false;'>Show/Hide</button></span>";
-                    echo "<div id='" . $var_name . '_' . $i . "'" .
-                        (count($variable['variables']) > 4 ? " style='display:none;'" : '') . ">";
+
+                    $sub_form_style = count($variable['variables']) > 4 ?
+                        "display:none;margin-left:26px;" :
+                        "margin-left:26px;";
+                    echo "<div id='" . $var_name . '_' . $i . "' style='{$sub_form_style}'>";
                     displayFormFields($variable['variables'], $data_vars[$i], $name);
                     echo "</div>";
                 }
-                if($variable['deselect']) {
+                if(!empty($variable['deselect'])) {
                     $name = $var_name;
                     if($input_name_prefix) {
                         $name = $input_name_prefix . '[' . $name . ']';
@@ -187,11 +194,13 @@ function displayFormFields($variables, $data, $input_name_prefix = ''): bool {
             }
             // Display unique data structure based on array key names
             else {
-                echo "<label for='$var_name'>" . ucwords(str_replace("_", " ", $var_name)) . ":</label>
-				<p style='margin-left:20px;margin-top:0px;'>";
+                echo "<label for='$var_name'>" .
+                    ucwords(str_replace("_", " ", $var_name)) .
+                    ":</label>
+				<p style='margin-left:20px;margin-top:0;'>";
                 $data_vars = json_decode($data[$var_name], true);
                 displayFormFields($variable, $data_vars, $var_name);
-                if($variable['deselect']) {
+                if(!empty($variable['deselect'])) {
                     $name = $var_name;
                     if($input_name_prefix) {
                         $name = $input_name_prefix . '[' . $name . ']';
@@ -210,17 +219,19 @@ function displayFormFields($variables, $data, $input_name_prefix = ''): bool {
 }
 
 function displayVariable($var_name, $variable, $current_value, $input_name_prefix = ''): bool {
-    global $system;
     // Set input name
     $name = $var_name;
     if($input_name_prefix) {
         $name = $input_name_prefix . '[' . $name . ']';
     }
-    if($variable['input_type'] == 'text') {
+
+    $input_type = $variable['input_type'] ?? '';
+
+    if($input_type == 'text') {
         echo "<label for='$name'>" . ucwords(str_replace("_", " ", $var_name)) . ":</label>
 		<input type='text' name='$name' value='" . stripslashes($current_value) . "' /><br />";
     }
-    else if($variable['input_type'] == 'radio' && !empty($variable['options'])) {
+    else if($input_type == 'radio' && !empty($variable['options'])) {
         echo "<label for='$name' style='margin-top:5px;'>" . ucwords(str_replace("_", " ", $var_name)) . ":</label>
 		<p style='padding-left:10px;margin-top:5px;'>";
         $count = 1;
@@ -240,7 +251,7 @@ function displayVariable($var_name, $variable, $current_value, $input_name_prefi
         }
         echo "</p>";
     }
-    else if($variable['input_type'] == 'select' && !empty($variable['options'])) {
+    else if($input_type == 'select' && !empty($variable['options'])) {
         echo "<label for='$name' style='margin-top:5px;'>" . ucwords(str_replace("_", " ", $var_name)) . ":</label>
 		<select name='{$name}'>
 		";
