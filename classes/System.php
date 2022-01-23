@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\Pure;
+
 require_once __DIR__ . '/EntityId.php';
 require_once __DIR__ . '/User.php';
 
@@ -879,6 +881,12 @@ class System {
         }
 
         return $kunai_packs;
+    }
+
+    #[Pure]
+    public function getReactFile(string $component_name): string {
+        $filename = "ui_components/build/{$component_name}.js";
+        return $filename . "?q=" .  filemtime($filename);
     }
 }
 

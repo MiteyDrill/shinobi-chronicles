@@ -1,0 +1,29 @@
+{
+  "name": "shinobi-chronicles",
+  "private": true,
+  "version": "0.8.0",
+  "description": "[Contributing](#contributing) [Local Setup](#local-setup)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch-ui": "npx babel --watch ui_components/src --out-dir ui_components/build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementum-games/shinobi-chronicles.git"
+  },
+  "author": "Levi Meahan<lsmjudoka@shinobi-chronicles.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elementum-games/shinobi-chronicles/issues"
+  },
+  "homepage": "https://github.com/elementum-games/shinobi-chronicles#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.12",
+    "@babel/preset-react": "^7.16.7"
+  },
+  "babel": {
+    "presets": ["@babel/preset-react"]
+  }
+}
