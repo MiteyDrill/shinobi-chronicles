@@ -3,6 +3,7 @@
 use JetBrains\PhpStorm\Pure;
 
 require_once __DIR__ . '/Battle.php';
+require_once __DIR__ . '/BattleApiPresenter.php';
 require_once __DIR__ . '/BattleField.php';
 require_once __DIR__ . '/BattleEffectsManager.php';
 require_once __DIR__ . '/BattleAttack.php';
@@ -52,7 +53,7 @@ require_once __DIR__ . '/FighterAction.php';
 class BattleManager {
     private System $system;
 
-    private int $battle_id;
+    public int $battle_id;
 
     private Battle $battle;
 
@@ -243,6 +244,21 @@ class BattleManager {
     public function renderBattle() {
         global $self_link;
 
+        $refresh_link = $this->spectate ? "{$self_link}&battle_id={$this->battle->battle_id}" : $self_link;
+
+        $spectate = $this->spectate;
+        $battleManager = $this;
+        $battle = $this->battle;
+        $system = $this->system;
+
+        $player = $this->player;
+        $opponent = $this->opponent;
+
+        //require 'templates/battle/battle_interface.php';
+        require 'templates/battle/battle_interface_v2.php';
+    }
+
+    public function getApiResponse(): array {
         if($this->player === $this->battle->player1) {
             $player = $this->battle->player1;
             $opponent = $this->battle->player2;
@@ -256,15 +272,13 @@ class BattleManager {
             $opponent = $this->battle->player2;
         }
 
-        $refresh_link = $this->spectate ? "{$self_link}&battle_id={$this->battle->battle_id}" : $self_link;
-
-        $spectate = $this->spectate;
-        $battleManager = $this;
-        $battle = $this->battle;
-        $system = $this->system;
-
-        // require 'templates/battle/battle_interface.php';
-        require 'templates/battle/battle_interface_v2.php';
+        return BattleApiPresenter::buildResponse(
+            battle: $this->battle,
+            battle_field: $this->field,
+            player: $player,
+            opponent: $opponent,
+            is_spectating: $this->spectate,
+        );
     }
 
     #[Pure]

@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-ui": "npx babel --watch ui_components/src --out-dir ui_components/build"
+    "watch-ui": "npx babel --watch ui_components/src --out-dir ui_components/build",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,18 @@
   "devDependencies": {
     "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.12",
-    "@babel/preset-react": "^7.16.7"
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-flow": "^7.16.7",
+    "@babel/preset-react": "^7.16.7",
+    "flow-bin": "^0.170.0"
   },
   "babel": {
-    "presets": ["@babel/preset-react"]
+    "presets": [
+      "@babel/preset-react",
+      "@babel/preset-flow"
+    ],
+    "targets": {
+      "esmodules": true
+    }
   }
 }
