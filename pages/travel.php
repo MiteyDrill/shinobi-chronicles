@@ -98,7 +98,7 @@ function travel() {
 		}
 	}
 	
-	echo "<style type='text/css'>
+	echo "<style>
 	#content table.map {
 		margin-left:auto;
 		margin-right:auto;
@@ -153,16 +153,16 @@ function travel() {
 		}
 		
 		var direction = '';
-		if(event.which == leftArrow || event.which == aLower || event.which == aUpper) {
+		if(event.which === leftArrow || event.which === aLower || event.which === aUpper) {
 			direction = 'west';
 		}
-		else if(event.which == upArrow || event.which == wLower || event.which == wUpper) {
+		else if(event.which === upArrow || event.which === wLower || event.which === wUpper) {
 			direction = 'north';
 		}
-		else if(event.which == rightArrow || event.which == dLower || event.which == dUpper) {
+		else if(event.which === rightArrow || event.which === dLower || event.which === dUpper) {
 			direction = 'east';
 		}
-		else if(event.which == downArrow || event.which == sLower || event.which == sUpper) {
+		else if(event.which === downArrow || event.which === sLower || event.which === sUpper) {
 			direction = 'south';
 		}
 		

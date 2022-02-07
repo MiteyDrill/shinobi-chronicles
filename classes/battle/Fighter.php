@@ -48,7 +48,7 @@ abstract class Fighter {
     public array $items;
 
     public array $equipped_jutsu;
-    public array $equipped_weapons;
+    public array $equipped_weapon_ids;
     public array $equipped_armor;
 
     public int $bloodline_id;
@@ -233,7 +233,7 @@ abstract class Fighter {
 
         switch($attack->purchase_type) {
             case Jutsu::PURCHASE_TYPE_DEFAULT:
-            case Jutsu::PURCHASE_TYPE_PURCHASEABLE:
+            case Jutsu::PURCHASE_TYPE_PURCHASABLE:
                 $offense = self::BASE_OFFENSE + ($off_skill * self::SKILL_OFFENSE_RATIO);
                 break;
             case Jutsu::PURCHASE_TYPE_BLOODLINE:

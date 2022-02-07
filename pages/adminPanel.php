@@ -11,6 +11,10 @@ Algorithm:	See master_plan.html
 
 require_once 'admin/formTools.php';
 
+/**
+ * @noinspection SqlResolve
+ * @noinspection SqlInsertValues
+ */
 function adminPanel() {
     global $system;
     global $player;
@@ -162,7 +166,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create NPC</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_ai' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -248,7 +252,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create Jutsu</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_jutsu' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -325,7 +329,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create Item</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_item' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -385,7 +389,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create " . ucwords(str_replace('_', ' ', $content_name)) . "</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_" . $content_name . "' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -445,7 +449,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create " . ucwords(str_replace('_', ' ', $content_name)) . "</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_" . $content_name . "' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -505,7 +509,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create " . ucwords(str_replace('_', ' ', $content_name)) . "</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_" . $content_name . "' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -565,7 +569,7 @@ function adminPanel() {
         echo "<table class='table'><tr><th>Create " . ucwords(str_replace('_', ' ', $content_name)) . "</th></tr>
 		<tr><td>
 		<form action='$self_link&page=create_" . $content_name . "' method='post'>
-		<style type='text/css'>
+		<style>
 		label {
 			display:inline-block;
 			width:120px;
@@ -634,7 +638,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit NPC (" . stripslashes($ai_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_ai' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -720,7 +724,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit Jutsu (" . stripslashes($jutsu_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_jutsu' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -809,7 +813,7 @@ function adminPanel() {
             }
             $style = "style='text-decoration:none;'";
             // Filter links
-            echo "<p style='text-align:center;margin-bottom:0px;'>
+            echo "<p style='text-align:center;margin-bottom:0;'>
 				<a href='$self_link&page=edit_jutsu&jutsu_type=ninjutsu' " .
                 ($jutsu_type == 'ninjutsu' ? $style : "") . ">Ninjutsu</a> |
 				<a href='$self_link&page=edit_jutsu&jutsu_type=taijutsu' " .
@@ -904,7 +908,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit Item (" . stripslashes($item_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_item' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -963,7 +967,7 @@ function adminPanel() {
 			<form action='$self_link&page=edit_item' method='post'>
 			<select name='item_id'>";
             foreach($item_array as $id => $item) {
-                echo "<option value='$id'>" . stripslashes($item['name']) . "</option>";
+                echo "<option value='$id'>" . stripslashes($item->name) . "</option>";
             }
             echo "</select>
 			<input type='submit' value='Select' />
@@ -985,7 +989,7 @@ function adminPanel() {
             }
             $style = "style='text-decoration:none;'";
             // Filter links
-            echo "<p style='text-align:center;margin-bottom:0px;'>
+            echo "<p style='text-align:center;margin-bottom:0;'>
 				<a href='$self_link&page=edit_item&item_type=weapon' " .
                 ($item_type == 1 ? $style : "") . ">Weapons</a> |
 				<a href='$self_link&page=edit_item&item_type=armor' " .
@@ -1001,14 +1005,14 @@ function adminPanel() {
 				<th style='width:20%;'>Cost</th>
 			</tr>";
             foreach($item_array as $id => $item) {
-                if($item['use_type'] != $item_type) {
+                if($item->use_type != $item_type) {
                     continue;
                 }
                 echo "<tr>
-					<td>" . $item['name'] . "</td>
-					<td>" . $item['effect_amount'] . "</td>
-					<td>" . ucwords(str_replace('_', ' ', $item['effect'])) . "</td>
-					<td>&yen;" . $item['purchase_cost'] . "</td>
+					<td>" . $item->name . "</td>
+					<td>" . $item->effect_amount . "</td>
+					<td>" . ucwords(str_replace('_', ' ', $item->effect)) . "</td>
+					<td>&yen;" . $item->purchase_cost . "</td>
 				</tr>";
             }
             echo "</table>";
@@ -1071,7 +1075,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit " . $content_name . " (" . stripslashes($content_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_{$content_name}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -1158,7 +1162,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit " . $content_name . " (" . stripslashes($content_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_{$content_name}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -1246,7 +1250,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit " . $content_name . " (" . stripslashes($content_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_{$content_name}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -1335,7 +1339,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit " . $content_name . " (" . stripslashes($content_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_{$content_name}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -1424,7 +1428,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit " . $content_name . " (" . stripslashes($content_data['name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_{$content_name}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;
@@ -1547,7 +1551,7 @@ function adminPanel() {
             echo "<table class='table'><tr><th>Edit User (" . stripslashes($data['user_name']) . ")</th></tr>
 			<tr><td>
 			<form action='$self_link&page=edit_user&user_name={$data['user_name']}' method='post'>
-			<style type='text/css'>
+			<style>
 			label {
 				display:inline-block;
 				width:120px;

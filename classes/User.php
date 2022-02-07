@@ -128,8 +128,9 @@ class User extends Fighter {
     public array $equipped_jutsu;
     public $equipped_items;
 
+    /** @var Item[] */
     public array $items;
-    public array $equipped_weapons;
+    public array $equipped_weapon_ids;
 
     public ?Bloodline $bloodline = null;
     public float $bloodline_skill;
@@ -493,7 +494,6 @@ class User extends Fighter {
         }
 
         // Daily Tasks
-        // Daily Tasks
         $this->daily_tasks = [];
         $this->daily_tasks_reset = 0;
         $result = $this->system->query("SELECT `tasks`, `last_reset` FROM `daily_tasks` WHERE `user_id`='$this->user_id' LIMIT 1");
@@ -668,7 +668,7 @@ class User extends Fighter {
                 $this->forbidden_seal = false;
             }
 
-            // Patch infinite premium from user name color
+            // Patch infinite premium from username color
             if(isset($this->forbidden_seal['color']) && $UPDATE >= User::UPDATE_FULL) {
                 if(!isset($this->forbidden_seal['level'])) {
                     $this->chat_color = $this->forbidden_seal['color'];
@@ -759,7 +759,7 @@ class User extends Fighter {
                         $gain = 100 - $this->jutsu[$jutsu_id]->level;
                     }
 
-                    if($this->checkInventory($jutsu_id, 'jutsu')) {
+                    if($this->hasJutsu($jutsu_id)) {
                         if($this->jutsu[$jutsu_id]->level < 100) {
                             $new_level = $this->jutsu[$jutsu_id]->level + $gain;
 
@@ -832,6 +832,8 @@ class User extends Fighter {
                     $train_type = str_replace('jutsu:', '', $this->train_type);
                     $display .= "<p class='trainingNotification'>Training: " . ucwords(str_replace('_', ' ', $train_type)) . "<br />" .
                         "<span id='trainingTimer'>" . System::timeRemaining($this->train_time - time(), 'short', false, true) . " remaining</span></p>";
+
+                    /** @noinspection JSUnusedAssignment */
                     $display .= "<script type='text/javascript'>
 					let train_time = " . ($this->train_time - time()) . ";
           setTimeout(()=>{titleBarFlash();}, train_time * 1000);
@@ -841,6 +843,7 @@ class User extends Fighter {
                     //*setTimeout is used to notify training finished*//
                     $display .= "<p class='trainingNotification'>Training: " . ucwords(str_replace('_', ' ', $this->train_type)) . "<br />" .
                         "<span id='trainingTimer'>" . System::timeRemaining($this->train_time - time(), 'short', false, true) . " remaining</span></p>";
+                    /** @noinspection JSUnusedAssignment */
                     $display .= "<script type='text/javascript'>
 					let train_time = " . ($this->train_time - time()) . ";
           setTimeout(()=>{titleBarFlash();}, train_time * 1000);
@@ -940,7 +943,7 @@ class User extends Fighter {
         if(!empty($equipped_jutsu)) {
             $count = 0;
             foreach($equipped_jutsu as $jutsu_data) {
-                if($this->checkInventory($jutsu_data->id, 'jutsu')) {
+                if($this->hasJutsu($jutsu_data->id)) {
                     $this->equipped_jutsu[$count]['id'] = $jutsu_data->id;
                     $this->equipped_jutsu[$count]['type'] = $jutsu_data->type;
                     $count++;
@@ -957,11 +960,11 @@ class User extends Fighter {
             $player_items_string = '';
 
             foreach($player_items_array as $item) {
-                if(!is_numeric($item->item_id)) {
+                if(!is_numeric($item->id)) {
                     continue;
                 }
-                $player_items[$item->item_id] = $item;
-                $player_items_string .= $item->item_id . ',';
+                $player_items[$item->id] = $item;
+                $player_items_string .= $item->id . ',';
             }
             $player_items_string = substr($player_items_string, 0, strlen($player_items_string) - 1);
 
@@ -969,9 +972,9 @@ class User extends Fighter {
 
             $result = $this->system->query("SELECT * FROM `items` WHERE `item_id` IN ({$player_items_string})");
             if($this->system->db_last_num_rows > 0) {
-                while($item = $this->system->db_fetch($result)) {
-                    $this->items[$item['item_id']] = $item;
-                    $this->items[$item['item_id']]['quantity'] = $player_items[$item['item_id']]->quantity;
+                while($item_data = $this->system->db_fetch($result)) {
+                    $item_id = $item_data['item_id'];
+                    $this->items[$item_id] = Item::fromDb($item_data, $player_items[$item_id]->quantity);
                 }
 
             }
@@ -984,16 +987,16 @@ class User extends Fighter {
         }
 
         $this->equipped_items = [];
-        $this->equipped_weapons = [];
+        $this->equipped_weapon_ids = [];
         $this->equipped_armor = [];
         if($equipped_items) {
             foreach($equipped_items as $item_id) {
-                if($this->checkInventory($item_id, 'item')) {
+                if($this->hasItem($item_id)) {
                     $this->equipped_items[] = $item_id;
-                    if($this->items[$item_id]['use_type'] == 1) {
-                        $this->equipped_weapons[] = $item_id;
+                    if($this->items[$item_id]->use_type == 1) {
+                        $this->equipped_weapon_ids[] = $item_id;
                     }
-                    else if($this->items[$item_id]['use_type'] == 2) {
+                    else if($this->items[$item_id]->use_type == 2) {
                         $this->equipped_armor[] = $item_id;
                     }
                 }
@@ -1001,31 +1004,6 @@ class User extends Fighter {
         }
 
         $this->inventory_loaded = true;
-    }
-
-    /* function checkInventory()
-    *	Checks user inventory, returns true if the item/jutsu is owned, false if it isn't.
-        -Parameters-
-        @item_id: Id of the item/jutsu to be checked for
-        @inventory_type (jutsu, item): Type of thing to check for, either item or jutsu
-    */
-    public function checkInventory($item_id, $inventory_type = 'jutsu'): bool {
-        if(!$item_id) {
-            return false;
-        }
-
-        if($inventory_type == 'jutsu') {
-            if(isset($this->jutsu[$item_id])) {
-                return true;
-            }
-        }
-        else if($inventory_type == 'item') {
-            if(isset($this->items[$item_id])) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function hasJutsu(int $jutsu_id): bool {
@@ -1057,7 +1035,7 @@ class User extends Fighter {
         }
 
         switch($jutsu->purchase_type) {
-            case Jutsu::PURCHASE_TYPE_PURCHASEABLE:
+            case Jutsu::PURCHASE_TYPE_PURCHASABLE:
                 // Element check
                 if($jutsu->element && $jutsu->element != Jutsu::ELEMENT_NONE) {
                     if($this->elements) {
@@ -1125,6 +1103,7 @@ class User extends Fighter {
     public function updateData() {
         $this->location = $this->x . '.' . $this->y;
 
+        /** @noinspection SqlWithoutWhere */
         $query = "UPDATE `users` SET
 		`current_ip` = '$this->current_ip',
 		`last_ip` = '$this->last_ip',
@@ -1298,8 +1277,8 @@ class User extends Fighter {
         if($this->items && !empty($this->items)) {
             foreach($this->items as $item) {
                 $player_items[$item_count] = [
-                    'item_id' => $item['item_id'],
-                    'quantity' => $item['quantity'],
+                    'item_id' => $item->id,
+                    'quantity' => $item->quantity,
                 ];
                 $item_count++;
             }
