@@ -59,9 +59,9 @@ class Item {
     #[Pure]
     public static function fromDb(array $db_data, int $quantity = 0): Item {
         return new Item(
-            id: $db_data['id'], 
+            id: $db_data['item_id'],
             name: $db_data['name'], 
-            description: $db_data['description'], 
+            description: $db_data['description'] ?? "",
             rank: $db_data['rank'], 
             purchase_cost: $db_data['purchase_cost'],
             purchase_type: $db_data['purchase_type'], 
