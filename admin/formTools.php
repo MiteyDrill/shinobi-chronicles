@@ -87,7 +87,7 @@ function validateFormData($variables, &$data, $content_id = null) {
 function validateVariable($var_name, $input, $variable, &$variables, &$data, $content_id = null): bool {
     global $system;
     // Skip variable if it is not required
-    if($variable['required_if']) {
+    if(isset($variable['required_if'])) {
         $req_var = $variable['required_if'];
         // If variable false/not set, continue
         if(empty($data[$req_var]) && empty($_POST[$req_var])) {
@@ -102,7 +102,7 @@ function validateVariable($var_name, $input, $variable, &$variables, &$data, $co
         }
     }
     // Check for special remove variable
-    if($variable['special'] == 'remove') {
+    if(($variable['special'] ?? '') == 'remove') {
         return true;
     }
     $data[$var_name] = $system->clean($input);
@@ -143,6 +143,7 @@ function validateVariable($var_name, $input, $variable, &$variables, &$data, $co
             throw new Exception("Invalid " . ucwords(str_replace("_", " ", $var_name)) . "!");
         }
     }
+
     // Check for uniqueness
     if(isset($variable['unique_required']) && $variable['unique_required'] == true) {
         if($content_id) {
@@ -158,6 +159,8 @@ function validateVariable($var_name, $input, $variable, &$variables, &$data, $co
             throw new Exception("'" . ucwords(str_replace("_", " ", $var_name)) . "' needs to be unique, the value '" . $data[$var_name] . "' is already taken!");
         }
     }
+
+    return true;
 }
 
 function displayFormFields($variables, $data, $input_name_prefix = ''): bool {

@@ -87,7 +87,7 @@ class User extends Fighter {
     public string $spouse_name;
     public int $marriage_time;
     public $village;
-    public $level;
+    public int $level;
     public $rank;
 
     public $exp;
@@ -104,14 +104,14 @@ class User extends Fighter {
 
     public $train_type;
     public $train_gain;
-    public $train_time;
+    public int $train_time;
 
-    public $money;
+    public int $money;
 
-    public $pvp_wins;
-    public $pvp_losses;
-    public $ai_wins;
-    public $ai_losses;
+    public int $pvp_wins;
+    public int $pvp_losses;
+    public int $ai_wins;
+    public int $ai_losses;
 
     public $missions_completed;
     public $presents_claimed;
@@ -288,7 +288,6 @@ class User extends Fighter {
         -Parameters-
         Update (1 = regen, 2 = training)
     */
-
     public function loadData($UPDATE = User::UPDATE_FULL, $remote_view = false): string {
         $result = $this->system->query("SELECT * FROM `users` WHERE `user_id`='$this->user_id' LIMIT 1");
         $user_data = $this->system->db_fetch($result);

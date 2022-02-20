@@ -13,7 +13,7 @@ if(isset($_SESSION['user_id'])) {
     $layout = $player->layout;
 }
 
-$system->renderStaticPageHeader($layout);
+$system->renderStaticPageHeader('Manual', $layout);
 
 ?>
 
