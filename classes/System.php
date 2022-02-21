@@ -448,7 +448,7 @@ class System {
         global $side_menu_end;
         global $footer;
 
-        $pages = require 'routes.php';
+        $pages = require __DIR__ . '../config/routes.php';
 
         echo $side_menu_start;
         foreach($pages as $id => $page) {
@@ -492,7 +492,7 @@ class System {
     }
 
     public function getMemes(): array {
-        $memes = require 'memes.php';
+        $memes = require 'config/memes.php';
 
         return [
             'codes' => array_map(function ($meme) {

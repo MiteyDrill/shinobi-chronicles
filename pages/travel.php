@@ -204,11 +204,15 @@ function travel() {
     </div>";
 	echo "</td></tr>";
 
-	require("scoutArea.php");
-	scoutArea(true, false);
+    NearbyPlayers::renderScoutAreaList(
+        system: $system,
+        player: $player,
+        self_link: $self_link,
+        in_existing_table: true,
+        show_spar_link: false
+    );
 
 	echo "</table>";
-
 }
 
 
