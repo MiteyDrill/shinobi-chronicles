@@ -50,19 +50,21 @@ class System {
     public $message;
     public $message_displayed;
 
+    public array $debug_messages;
+
     // Variable for DB connection resource
-    private $host;
-    private $username;
-    private $password;
-    private $database;
+    private string $host;
+    private string $username;
+    private string $password;
+    private string $database;
     public $con;
 
     public $environment;
 
-    public $SC_OPEN;
-    public $register_open;
+    public bool $SC_OPEN;
+    public bool $register_open;
 
-    public $link;
+    public string $link;
 
     public $timezoneOffset;
 
@@ -127,9 +129,13 @@ class System {
         'event' => 27,
         'team' => 24,
     ];
+
     public array $links = [
         'github' => 'https://github.com/elementum-games/shinobi-chronicles',
         'discord' => 'https://discord.gg/Kx52dbXEf3',
+    ];
+    public array $api_links = [
+        'battle' => ''
     ];
 
     //Chat variables
@@ -208,7 +214,7 @@ class System {
         'dildo',
     ];
 
-    public $debug = [
+    public array $debug = [
         'battle' => false,
         'battle_effects' => false,
         'jutsu_collision' => false,
@@ -236,6 +242,8 @@ class System {
         foreach(self::PAGE_IDS as $slug => $id) {
             $this->links[$slug] = $this->link . '?id=' . $id;
         }
+
+        $this->api_links['battle'] = $this->link . 'api/battle.php';
 
         $this->timezoneOffset = date('Z');
 
@@ -370,6 +378,10 @@ class System {
         if(strlen($this->message) == 0 || $force_message) {
             $this->message = $message;
         }
+    }
+
+    public function debugMessage($message) {
+        $this->debug_messages[] = $message;
     }
 
     /* function printMessage()
