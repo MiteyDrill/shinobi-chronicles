@@ -50,7 +50,7 @@ class System {
     public $message;
     public $message_displayed;
 
-    public array $debug_messages;
+    public array $debug_messages = [];
 
     // Variable for DB connection resource
     private string $host;
