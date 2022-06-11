@@ -162,51 +162,143 @@ function store() {
 			$jutsu = $shop_jutsu[$jutsu_id];
 			echo "<table class='table'>
 			<tr><th>" . $jutsu['name'] . " (<a href='$self_link'>Return</a>)</th></tr>
-			<tr><td>
-				<label style='width:6.5em;'>Rank:</label>" . $RANK_NAMES[$jutsu['rank']] . "<br />";
-				if($jutsu['parent_jutsu']) {
-					echo "<label style='width:6.5em;'>Parent Jutsu:</label>" . 
-						$shop_jutsu[$jutsu['parent_jutsu']]['name'] . "<br />";
+			<tr>
+			<td>";
+
+			echo "
+
+			<style>
+
+			/*Might Mess up CSS on other pages idk?*/
+			tbody{
+				position: relative; /*For Banner*/
+			}
+
+			td{
+				padding: 0 !important; /*For Banner*/
+			}
+
+				#jutsu_display_container{
+					margin: 0em auto;
+					text-align: center;
+					width: 80%;
 				}
-				if($jutsu['element'] != 'None') {
-					echo "<label style='width:6.5em;'>Element:</label>";
-					if($player->elements && array_search($jutsu['element'], $player->elements) !== false) {
-						echo "<span style='color:#00C000;font-weight:bold;'>";
-					}
-					else {
-						echo "<span style='color:#C00000;font-weight:bold;'>";
-					}
-					echo $jutsu['element'] . "</span><br />";
+
+				#jutsu_display_container p{
+					font-size: 18px;
 				}
-				echo "<label style='width:6.5em;'>Use cost:</label>" . $jutsu['use_cost'] . "<br />";
-				if($jutsu['cooldown']) {
-					echo "<label style='width:6.5em;'>Cooldown:</label>" . $jutsu['cooldown'] . " turn(s)<br />";
+
+				#shop_jutsu_description {
+					margin: 3em 0;
+					padding: 0.2em 4em;
+					text-align: left;
+					border: 1px solid gray;
+					border-radius: 25px;
 				}
-				if($jutsu['effect']) {
-					
-					echo "<label style='width:6.5em;'>Effect:</label>" . ucwords(str_replace('_', ' ', $jutsu['effect'])) . "<br />";
+
+				#shop_jutsu_description p{
+					margin: 0.2em 0em;
 				}
-				echo "<label style='width:6.5em;float:left;'>Description:</label> 
-					<p style='display:inline-block;margin:0px;width:37.1em;'>" . $jutsu['description'] . "</p>
-				<br style='clear:both;' />
-				<label style='width:6.5em;'>Jutsu type:</label>" . ucwords($jutsu['jutsu_type']);
-				$result = $system->query("SELECT `name` FROM `jutsu` WHERE `parent_jutsu`='$jutsu_id'");
-				if($system->db_last_num_rows > 0) {
-					echo "<br />
-					<br /><label>Learn <b>" . $jutsu['name'] . "</b> to level 50 to unlock:</label>
-						<p style='margin-left:10px;margin-top:5px;'>";
-					while($row = $system->db_fetch($result)) {
-						echo $row['name'] . "<br />";
-					}
-					echo "</p>";
+
+				#shop_jutsu_extra_info p{
+					margin: 0px;
+					text-align: left;
 				}
-				
+
+				.ribbon{
+					height: 98%;
+					width: 35px;
+					background-color: purple;
+				}
+
+				#left_ribbon{
+					position: absolute;
+					top: 18; /*ez fix*/
+					left: 16;
+				}
+
+				#right_ribbon{
+					position: absolute;
+					right: 16;
+					top: 18; /*ez fix*/
+				}
+			</style>
+
+			<div id='jutsu_display_container'>
+
+			<div class='ribbon' id='left_ribbon'></div>
+
+				<div id='shop_jutsu_header'>
+					<h1>Unexpected Sting</h1>
+					<h2>Ninjutsu</h2>
+				</div>
+
+				<div id='shop_jutsu_description'>
+					<p>A hidden weapon can be fatal in the right circumstances,
+					combining it with a kick adds insult to injury.</p>
+				</div>
+
+				<div id='shop_jutsu_effect_description'>
+					<h2>Speed Nerf - 2 Turns</h2>
+				</div>
+
+				<div id='shop_jutsu_extra_info'>
+					<p>Use Cost: 10</p>
+					<p>Cooldown: 1 Turn</p>
+					<p>Rank: Genin</p>
+					<p>Level 50 Unlock: <em>Distorted System</em></p>
+				</div>
+
+				<div class='ribbon' id='right_ribbon'></div>
+
+			</div>
+
+			";
+
+				// <label style='width:6.5em;'>Rank:</label>" . $RANK_NAMES[$jutsu['rank']] . "<br />";
+				// if($jutsu['parent_jutsu']) {
+				// 	echo "<label style='width:6.5em;'>Parent Jutsu:</label>" .
+				// 		$shop_jutsu[$jutsu['parent_jutsu']]['name'] . "<br />";
+				// }
+				// if($jutsu['element'] != 'None') {
+				// 	echo "<label style='width:6.5em;'>Element:</label>";
+				// 	if($player->elements && array_search($jutsu['element'], $player->elements) !== false) {
+				// 		echo "<span style='color:#00C000;font-weight:bold;'>";
+				// 	}
+				// 	else {
+				// 		echo "<span style='color:#C00000;font-weight:bold;'>";
+				// 	}
+				// 	echo $jutsu['element'] . "</span><br />";
+				// }
+				// echo "<label style='width:6.5em;'>Use cost:</label>" . $jutsu['use_cost'] . "<br />";
+				// if($jutsu['cooldown']) {
+				// 	echo "<label style='width:6.5em;'>Cooldown:</label>" . $jutsu['cooldown'] . " turn(s)<br />";
+				// }
+				// if($jutsu['effect']) {
+				//
+				// 	echo "<label style='width:6.5em;'>Effect:</label>" . ucwords(str_replace('_', ' ', $jutsu['effect'])) . "<br />";
+				// }
+				// echo "<label style='width:6.5em;float:left;'>Description:</label>
+				// 	<p style='display:inline-block;margin:0px;width:37.1em;'>" . $jutsu['description'] . "</p>
+				// <br style='clear:both;' />
+				// <label style='width:6.5em;'>Jutsu type:</label>" . ucwords($jutsu['jutsu_type']);
+				// $result = $system->query("SELECT `name` FROM `jutsu` WHERE `parent_jutsu`='$jutsu_id'");
+				// if($system->db_last_num_rows > 0) {
+				// 	echo "<br />
+				// 	<br /><label>Learn <b>" . $jutsu['name'] . "</b> to level 50 to unlock:</label>
+				// 		<p style='margin-left:10px;margin-top:5px;'>";
+				// 	while($row = $system->db_fetch($result)) {
+				// 		echo $row['name'] . "<br />";
+				// 	}
+				// 	echo "</p>";
+				// }
+
 				echo "</td></tr></table>";
 		}
 		$view = false;
 	}
-	
-	
+
+
 	if($view == 'jutsu') {
 		$jutsu_type = '';
 		if(!empty($_GET['jutsu_type'])) {
