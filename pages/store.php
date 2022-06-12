@@ -165,6 +165,42 @@ function store() {
 			<tr>
 			<td>";
 
+			//set variables
+			$desc_jutsuType = ucfirst($jutsu['jutsu_type']);
+			$desc_jutsuEffect = ucwords(str_replace('_', ' ', $jutsu['effect']));
+			$desc_parentJutsu = 'None';
+
+			//jutsu color
+			$jutsu_color_type = '';
+			$jutsu_color_type = $jutsu['jutsu_type'];
+
+			//check jutsu effect
+			if(empty($jutsu['effect'])){
+				$desc_jutsuEffect = 'No Effect';
+			}
+			//change banner color
+			switch($jutsu_color_type){
+				case 'ninjutsu':
+				$jutsu_color_type = 'blue';
+				break;
+				case 'taijutsu':
+				$jutsu_color_type = 'red';
+				break;
+				case 'genjutsu':
+				$jutsu_color_type = 'green';
+				break;
+				default:
+				$jutsu_color_type = 'gray';
+			};
+
+			//parent jutsu check
+			$result = $system->query("SELECT `name` FROM `jutsu` WHERE `parent_jutsu`='$jutsu_id'");
+			if($system->db_last_num_rows > 0) {
+				while($row = $system->db_fetch($result)) {
+						$desc_parentJutsu = $row['name'];
+					}
+			}
+
 			echo "
 
 			<style>
@@ -180,6 +216,7 @@ function store() {
 
 				#jutsu_display_container{
 					margin: 0em auto;
+					padding: 1rem 0em;
 					text-align: center;
 					width: 80%;
 				}
@@ -206,21 +243,38 @@ function store() {
 				}
 
 				.ribbon{
-					height: 98%;
-					width: 35px;
-					background-color: purple;
+					height: 100%;
+					width: 25px;
+					background-color: {$jutsu_color_type}; /*Banner color*/
+					position: absolute;
+					top: 0; /*ez fix*/
+					z-index: 0;
+				}
+
+				.ribbon::after{
+					position: absolute;
+					content:'';
+
+					/*Triangle*/
+					width: 0;
+				  height: 0;
+				  border-left: 20px solid transparent;
+				  border-right: 20px solid transparent;
+				  border-top: 20px solid {$jutsu_color_type};
+					border-bottom-left-radius: 10px;
+
+					background-color: transparent;
+					bottom: -20px;
+					right: 0;
+					left: -7.5;
 				}
 
 				#left_ribbon{
-					position: absolute;
-					top: 18; /*ez fix*/
 					left: 16;
 				}
 
 				#right_ribbon{
-					position: absolute;
 					right: 16;
-					top: 18; /*ez fix*/
 				}
 			</style>
 
@@ -229,24 +283,24 @@ function store() {
 			<div class='ribbon' id='left_ribbon'></div>
 
 				<div id='shop_jutsu_header'>
-					<h1>Unexpected Sting</h1>
-					<h2>Ninjutsu</h2>
+					<h1>{$jutsu['name']}</h1>
+					<h2>{$desc_jutsuType}</h2>
 				</div>
 
 				<div id='shop_jutsu_description'>
-					<p>A hidden weapon can be fatal in the right circumstances,
-					combining it with a kick adds insult to injury.</p>
+					<p>{$jutsu['description']}</p>
 				</div>
 
 				<div id='shop_jutsu_effect_description'>
-					<h2>Speed Nerf - 2 Turns</h2>
+					<h3>{$desc_jutsuEffect}</h3>
 				</div>
 
 				<div id='shop_jutsu_extra_info'>
-					<p>Use Cost: 10</p>
-					<p>Cooldown: 1 Turn</p>
-					<p>Rank: Genin</p>
-					<p>Level 50 Unlock: <em>Distorted System</em></p>
+					<p>Use Cost: {$jutsu['use_cost']}</p>
+					<p>Cooldown: {$jutsu['cooldown']} turn<small>/s</small></p>
+					<br>
+					<p>Rank: {$RANK_NAMES[$jutsu['rank']]}</p>
+					<p>Level 50 Unlock: <em>{$desc_parentJutsu}</em></p>
 				</div>
 
 				<div class='ribbon' id='right_ribbon'></div>
