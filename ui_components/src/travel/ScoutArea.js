@@ -5,9 +5,9 @@ class ScoutArea extends React.Component {
     this.state = {
       userList: [],
       currentUserData: [],
-      currentUser_village: 'none',
+      currentUser_village: 'no village set',
       currentUser_location: '0.0',
-      currentUser_rank: 'no_rank'
+      currentUser_rank: 'no rank set',
     }
   }
 
@@ -39,6 +39,29 @@ class ScoutArea extends React.Component {
     this.setUserListDataInterval();
   }
 
+  //return village color styling
+  getVillageColor(village, current_user_village) {
+    if(village == current_user_village){
+      return {fontWeight: 'bold', color: '#00C000'};
+    } else {
+      return {fontWeight: 'bold', color: '#C00000'};
+    }
+  }
+
+  displayUserAction(village, location, rank, battleId){
+    if(battleId != '0'){
+      return 'In Battle!';
+    } else if (this.state.currentUser_village != village && this.state.currentUser_location == location && this.state.currentUser_rank == rank){
+      return (
+        <a href={item['attack_link'] + '&attack=' + item['user_id']}>
+          Attack
+        </a>
+      )
+    } else {
+      return '';
+    }
+  }
+
   render() {
 
     return (
@@ -60,17 +83,28 @@ class ScoutArea extends React.Component {
           {/*Create This Dynamically*/}
           {
           this.state.userList.map(item =>
-            <tr id={item['user_name']} key={item['user_name']}>
-              <td>{item['user_name']}</td>
+            <tr style={{textAlign: 'center'}} className='table_multicolumns' id={item['user_name']} key={item['user_name']}>
+
+              <td>
+                <a href={item['user_profile_link'] + '&user=' + item['user_name']}>
+                  {item['user_name']}
+                </a>
+              </td>
               <td>{item['rank']}</td>
-              <td>{item['village']}</td>
+              <td>
+              {/*TODO: confusing to read should fix*/}
+                <img src={item['image_link']} style={{maxHeight:"18px", maxWidth:"18px"}}/>
+                <span style={this.getVillageColor(item['village'], this.state.currentUser_village)}>
+                  {" " + item['village']}
+                </span>
+              </td>
               <td>{item['location']}</td>
 
               <td>
-                <a href={item['attack_link'] + '&attack=' + item['user_id']}>
-                  {(this.state.currentUser_village != item['village'] && this.state.currentUser_location == item['location'] && this.state.currentUser_rank == item['rank']) ? "Attack" : ""}
-                </a>
+              {console.log(item['battle_id'])}
+                {this.displayUserAction(item['village'], item['location'], item['rank'], item['battle_id'])}
               </td>
+
             </tr>
 
           )
