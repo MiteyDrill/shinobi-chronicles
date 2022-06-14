@@ -212,13 +212,28 @@ function travel() {
         show_spar_link: false
     );
 
-	echo "</table>";
+	echo "</table>
+
+	<div id='scout_container'></div>
+
+	<script type='module' src='./ui_components/build/travel/ScoutArea.js'></script>
+
+	<script type='text/javascript'>
+	window.addEventListener('load', () => {
+		ReactDOM.render(
+				React.createElement(ScoutArea, {}),
+				document.querySelector(\"#scout_container\")
+		);
+	})
+	</script>
+
+	";
 }
 
 
 function renderMap($player, $villages, $icons) {
     $output = "";
-    $output .= "<table class='map' 
+    $output .= "<table class='map'
             style='padding:0;border:1px solid #000;border-collapse:collapse;border-spacing:0;border-radius:0;'>";
     for($y = 1; $y <= System::MAP_SIZE_Y; $y++) {
         $output .= "<tr>";
