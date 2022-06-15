@@ -4,25 +4,37 @@ class MapSquare extends React.Component {
     super(props);
   }
 
-  getStyle(isVillage){
-
-    var isVillage_Style = {
-      backgroundImage: "url(./images/village_icons/stone.png"
+  //return style
+  getStyle(tile_data){
+    if(tile_data['tile'] == 'default'  && this.props.isPlayerHere){
+      return {
+        backgroundColor: 'black'
+      };
+    } else if(tile_data['tile'] == 'village' && this.props.isPlayerHere){
+      return {
+        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundColor: '#000'
+      }
+    } else if (tile_data['tile'] == 'village' && this.props.playerVillage.toLowerCase() == tile_data['village_name']) {
+      return {
+        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundColor: 'yellow'
+      }
+    } else if (tile_data['tile'] == 'village') {
+      return {
+        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundColor: '#999'
+      }
     }
 
-    var default_style = {
-    }
-
-    return (isVillage) ? isVillage_Style : default_style;
+    //default tile
+    return {};
   }
 
   render(){
 
-    var isVillage = this.props.isVillage;
-    var villageImageLink = "stone.png";
-
     return (
-      <td style={this.getStyle(isVillage)} ></td>
+      <td style={this.getStyle(this.props.tileData)}></td>
     )
   }
 

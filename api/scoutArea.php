@@ -117,7 +117,20 @@ $personal_user[] = array(
 );
 
 
-/*Array List of Users and their Locations*/
+/*SET MAP DATA*/
+$village_positions = [];
+$unfiltered_village_data =  $system->getVillageLocations();
+/*temp solution bring out village position values*/
+$i = 0; //counter
+foreach($unfiltered_village_data as $key => $value){
+  $village_positions[] = (explode(".", $key));
+}
+/*temp solution turn string map positions to int map positions*/
+for($i = 0; $i < count($village_positions); $i++){
+  $village_positions[$i][0] = intval($village_positions[$i][0]);
+  $village_positions[$i][1] = intval($village_positions[$i][1]);
+}
+
 
 /*Not Sure if the Access-Control headers actually do anything?*/
 header('Access-Control-Allow-Origin: https://shinobichronicles.com/');
@@ -128,6 +141,11 @@ $area_data = array(
   'area_data' => array(
     'users' => $user_list,
     'current_user' => $personal_user
+  ),
+
+  'map_data' => array(
+     'village_positions' =>  $village_positions,
+     'unfiltered_village_Data' => $unfiltered_village_data
   ),
 
   'errors' => $errors

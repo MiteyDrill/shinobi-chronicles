@@ -2,25 +2,90 @@ import { MapSquare } from "./MapSquare.js";
 
 class TravelComponent extends React.Component {
 
-  /**
-  * if ([x, y] == [x, y]) : bool
-  */
-  isVillage(current_map_pos, user_pos): bool{
+  constructor(props){
+    super(props);
 
-    for(var i = 0; i < current_map_pos.length; i++){
-      if(current_map_pos[i][0] == user_pos[0] && current_map_pos[i][1] == user_pos[1]){
-        return true;
-      }
+    this.state = {
+      mapVillageData: ['no map data set'],
+      playerVillage: 'none',
+      userPosition: '0.0',
+      userPosition_x: 0,
+      userPosition_y: 0
     }
-    return false;
+  }
+
+  componentDidMount(){
+    this.setTravelJSONData()
+  }
+
+  setTravelJSONData(){
+    fetch("http://192.168.1.47/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php", ).
+    then((json) => {
+      return json.json();
+    }).then((data) => {
+      /*Set JSON Data*/
+
+      this.setState({mapVillageData: data['map_data']['village_positions']});
+      this.setState({playerVillage: data['area_data']['current_user'][0]['village']});
+      this.setState({userPosition: data['area_data']['current_user'][0]['location']});
+      this.setState({userPosition_x: data['area_data']['current_user'][0]['x_pos']});
+      this.setState({userPosition_y: data['area_data']['current_user'][0]['y_pos']});
+
+    }).catch((e)=>{console.log("Travel Component Error: " + e)})
+  }
+
+
+  /**
+  * return true/false if player is at same position
+  */
+  isPlayerHere(x, y){
+    if(this.state.userPosition_x == x && this.state.userPosition_y == y){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  /**
+  * returns cooresponding village data in an object
+  */
+  getTileInfo(map_position: array): array{
+
+    //due to array logic
+    var offset = 1;
+
+    /*hardcoded villages according to the positions*/
+    var village_names = [
+      'stone',
+      'cloud',
+      'leaf',
+      'sand',
+      'mist'
+    ];
+
+    //if Village Position == current map position (return {village_data})
+    for(var i = 0; i < this.state.mapVillageData.length; i++){
+
+      if(this.state.mapVillageData[i][0] == map_position[1]+offset && this.state.mapVillageData[i][1] == map_position[0]+offset){
+        return {
+          'tile': 'village',
+          'village_name': village_names[i]
+        }
+      }
+
+    }
+
+    return {
+      'tile': 'default',
+    };
   }
 
 
   //returns array of jsx elements
   renderMap(x, y): array{
 
-    //important structure positions
-    let villagePositions = [[2,4], [1,16], [5,8], [7, 2], [9,15]];
+    //current user pos
     let currentUserPosition = [3,3];
 
     let rows = [];
@@ -29,7 +94,7 @@ class TravelComponent extends React.Component {
       let data = [];
       for(var j = 0; j < y; j++){
         data.push(
-          <MapSquare key={j} isVillage={this.isVillage( villagePositions , [i, j] )}/>
+          <MapSquare key={j} playerVillage={this.state.playerVillage} isPlayerHere={ this.isPlayerHere(j+1, i+1) } tileData={this.getTileInfo( [i, j] )}/>
         );
       }
       rows.push(<tr key={i}>{data}</tr>);
@@ -51,7 +116,7 @@ class TravelComponent extends React.Component {
         style={{padding:0, border: "1px solid #000", borderCollapse:"collapse", borderSpacing:"0", borderRadius:"0"}}>
           <thead>
             <tr>
-              <th colSpan='18'>Your Location 18.3</th>
+              <th colSpan='18'>Your Location {this.state.userPosition}</th>
             </tr>
           </thead>
           <tbody>

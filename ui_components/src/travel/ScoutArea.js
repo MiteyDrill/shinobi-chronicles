@@ -24,7 +24,7 @@ class ScoutArea extends React.Component {
 
     setInterval(
       () => {
-        fetch("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php", {
+        fetch("http://192.168.1.47/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php", {
         mode: 'cors',
         credentials: 'include',
         method: 'GET',
