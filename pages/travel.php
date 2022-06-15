@@ -119,6 +119,11 @@ function travel() {
 		border-color: #101010;
 		background-color: rgba(0, 0, 0, 0.4);
 	}
+
+	.map td{
+		border: black 1px dashed;
+	}
+
 	</style>";
 	
 	
@@ -215,10 +220,19 @@ function travel() {
 	echo "</table>
 
 	<div id='scout_container'></div>
+	<div id='travelComponent_container'></div>
 
 	<script type='module' src='./ui_components/build/travel/ScoutArea.js'></script>
+	<script type='module' src='./ui_components/build/travel/TravelComponent.js'></script>
 
 	<script type='text/javascript'>
+	window.addEventListener('load', () => {
+		ReactDOM.render(
+				React.createElement(TravelComponent, {}),
+				document.querySelector(\"#travelComponent_container\")
+		);
+	})
+
 	window.addEventListener('load', () => {
 		ReactDOM.render(
 				React.createElement(ScoutArea, {}),

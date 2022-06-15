@@ -15,9 +15,21 @@ class ScoutArea extends React.Component {
     /*Not sure if this is a good way to impliment this*/
     /*Slow network will add a large stack of back calls to display*/
     /*From what I can see on the Network panel on the chrome dev tools*/
+    let headers = new Headers();
+
+    /*Not sure if these headers actually do anything?*/
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    headers.append('Origin','http://192.168.1.122');
+
     setInterval(
       () => {
-        fetch("http://localhost/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php")
+        fetch("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php", {
+        mode: 'cors',
+        credentials: 'include',
+        method: 'GET',
+        headers: headers
+    })
         .then( (data) => {
             return data.json();
         }).then((json) => {
@@ -101,7 +113,6 @@ class ScoutArea extends React.Component {
               <td>{item['location']}</td>
 
               <td>
-              {console.log(item['battle_id'])}
                 {this.displayUserAction(item['village'], item['location'], item['rank'], item['battle_id'])}
               </td>
 

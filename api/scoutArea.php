@@ -118,6 +118,10 @@ $personal_user[] = array(
 
 
 /*Array List of Users and their Locations*/
+
+/*Not Sure if the Access-Control headers actually do anything?*/
+header('Access-Control-Allow-Origin: https://shinobichronicles.com/');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 
 $area_data = array(
