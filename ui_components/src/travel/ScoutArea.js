@@ -32,13 +32,13 @@ class ScoutArea extends React.Component {
             return data.json();
         }).then((json) => {
 
-          console.log('Scout Data Recieved');
-
             this.setState({userList: json['area_data']['users']})
             this.setState({currentUserData: json['area_data']['current_user']})
             this.setState({currentUser_village: json['area_data']['current_user'][0]['village']});
             this.setState({currentUser_location: json['area_data']['current_user'][0]['location']});
             this.setState({currentUser_rank: json['area_data']['current_user'][0]['rank']});
+          
+            console.log("Scout Component Errors: " + ((json['errors'].length) ? json['errors'] : 'No errors'));
 
 
         }).catch((e) => {

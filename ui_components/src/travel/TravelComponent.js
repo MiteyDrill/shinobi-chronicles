@@ -67,10 +67,7 @@ class TravelComponent extends React.Component {
       /**Data Recieved do something */
       this.setState({playerID: data['area_data']['current_user'][1]['user_id']});
 
-      console.log("Post Data: " + ((data['post_data'].length) ? data['post_data'] : 'No Data'));
-      console.log("Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
-
-      console.log("POST to API was succesfull");
+      console.log("Travel Component Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
 
     }).catch((e)=>{console.log("Travel Component Error: " + e)})     
     
