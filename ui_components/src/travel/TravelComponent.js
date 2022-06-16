@@ -7,6 +7,7 @@ class TravelComponent extends React.Component {
 
     this.state = {
       mapVillageData: ['no map data set'],
+      playerID: 0,
       playerVillage: 'none',
       userPosition: '0.0',
       userPosition_x: 0,
@@ -15,23 +16,112 @@ class TravelComponent extends React.Component {
   }
 
   componentDidMount(){
-    this.setTravelJSONData()
+    //get json data
+    this.getTravelJSONData();
+    // this.updateTravelDB();
   }
 
-  setTravelJSONData(){
-    fetch("http://192.168.1.47/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php", ).
+  updateTravelDB(direction: String = 'none'){
+
+    let travelDirection = 'none';
+
+    switch (direction) {
+      case 'north': {
+        travelDirection = 'north';
+      }
+      break;
+      case 'south': {
+        travelDirection = 'south';
+      }
+      break;
+      case 'east': {
+        travelDirection = 'east';
+      }
+      break;
+      case 'west': {
+        travelDirection = 'west';
+      }
+      break;
+      default: {
+        travelDirection = 'none';
+      }
+    }
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify( { 
+        request: 'TravelComponent.js',
+        current_player_id: this.state.playerID,
+        action: (travelDirection == 'none' ? '' : travelDirection), 
+      } )
+    };
+
+    fetch(
+      "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php",
+      requestOptions
+    ).
     then((json) => {
       return json.json();
     }).then((data) => {
-      /*Set JSON Data*/
+      /**Data Recieved do something */
+      this.setState({playerID: data['area_data']['current_user'][1]['user_id']});
 
-      this.setState({mapVillageData: data['map_data']['village_positions']});
-      this.setState({playerVillage: data['area_data']['current_user'][0]['village']});
-      this.setState({userPosition: data['area_data']['current_user'][0]['location']});
-      this.setState({userPosition_x: data['area_data']['current_user'][0]['x_pos']});
-      this.setState({userPosition_y: data['area_data']['current_user'][0]['y_pos']});
+      console.log("Post Data: " + ((data['post_data'].length) ? data['post_data'] : 'No Data'));
+      console.log("Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
 
-    }).catch((e)=>{console.log("Travel Component Error: " + e)})
+      console.log("POST to API was succesfull");
+
+    }).catch((e)=>{console.log("Travel Component Error: " + e)})     
+    
+  }
+
+  //syntax is used so this. keywork will work
+  moveNorth = () => {
+    this.updateTravelDB('north');
+  }
+
+  moveEast = () => {
+    this.updateTravelDB('east');
+  }
+
+  moveSouth = () => {
+    this.updateTravelDB('south');
+  }
+
+  moveWest = () => {
+    this.updateTravelDB('west');
+  }
+
+  getTravelJSONData(){
+
+    setInterval( () => {
+
+      let headers = {
+        "Content-Type": "application/json",
+      }
+  
+      fetch(
+        "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php"
+      ).
+      then((json) => {
+        return json.json();
+      }).then((data) => {
+
+        /*Set recieved JSON data */
+
+        this.setState({playerID: data['area_data']['current_user'][1]['user_id']}); //recieving this in 2 functions
+  
+        this.setState({mapVillageData: data['map_data']['village_positions']});
+        this.setState({playerVillage: data['area_data']['current_user'][0]['village']});
+        this.setState({userPosition: data['area_data']['current_user'][0]['location']});
+        this.setState({userPosition_x: data['area_data']['current_user'][0]['x_pos']});
+        this.setState({userPosition_y: data['area_data']['current_user'][0]['y_pos']});
+  
+      }).catch((e)=>{console.log("Travel Component Error: " + e)})
+
+    }, 300);
+
   }
 
 
@@ -86,7 +176,7 @@ class TravelComponent extends React.Component {
   renderMap(x, y): array{
 
     //current user pos
-    let currentUserPosition = [3,3];
+    let currentUserPosition = [3,3]; //test pos
 
     let rows = [];
     //loop creates jsx and pushes them to [rows]
@@ -125,6 +215,18 @@ class TravelComponent extends React.Component {
 
           </tbody>
         </table>
+        <button onClick={this.moveEast}>
+          east
+        </button>
+        <button onClick={this.moveNorth}>
+          north
+        </button>
+        <button onClick={this.moveSouth}>
+          south
+        </button>
+        <button onClick={this.moveWest}>
+          west
+        </button>
       </div>
     )
   }
