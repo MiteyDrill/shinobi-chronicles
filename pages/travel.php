@@ -121,7 +121,7 @@ function travel() {
 	}
 
 	.map td{
-		border: black 1px dashed;
+		border: black 2px solid; /*REACT BORDER*/
 	}
 
 	</style>";
@@ -219,8 +219,9 @@ function travel() {
 
 	echo "</table>
 
-	<div id='scout_container'></div>
 	<div id='travelComponent_container'></div>
+
+	<div id='scout_container'></div>
 
 	<script type='module' src='./ui_components/build/travel/ScoutArea.js'></script>
 	<script type='module' src='./ui_components/build/travel/TravelComponent.js'></script>

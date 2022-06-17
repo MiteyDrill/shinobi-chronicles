@@ -63,7 +63,7 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
     if ($requested_user_id == $player->user_id) {
 
       //db query
-      $request_query = $system->query("SELECT `location` FROM `users` WHERE `user_id` = {$requested_user_id}");
+      $request_query = $system->query("SELECT `village`, `location` FROM `users` WHERE `user_id` = {$requested_user_id}");
 
       if ($system->db_last_num_rows == 0) {
         $errors[] = "Could not get any database info from requested user ID";
@@ -71,7 +71,8 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
         try {
           while ($row = $system->db_fetch($request_query)) {
             //calculates new user location
-            $newLocation = handleUserLocationUpdate($row['location'], $requested_user_travel_direction);
+            $newLocation = handleUserLocationUpdate($row['location'], $requested_user_travel_direction, $row['village']);
+            $post_data = $row['village'];
             //updates user location
             /**TODO: not sure this DB Update should be set here...*/
             $u_query = $system->query("UPDATE `users` SET `location` = {$newLocation} WHERE `user_id` = {$player->user_id}");
@@ -141,7 +142,7 @@ WHERE `last_active` > UNIX_TIMESTAMP() - 120 ORDER BY `exp` DESC LIMIT $min, $us
 
 //Get Active User List & add it to $user_list[]
 if ($system->db_last_num_rows == 0 || count($user_list)) {
-  $errors[] = 'No users found in db call';
+  $errors[] = 'No active users returned from DB';
 } else { try {
   while ($row = $system->db_fetch($query)) {
 
@@ -220,11 +221,11 @@ for ($i = 0; $i < count($village_positions); $i++) {
  * 
  * @param String $originalPosition example "12.4"
  * @param String $direction example "north"
- * @return String $newPost example "12.5
+ * @param String $user_village example "sand": Used for checks
+ * @return String $newPost example "12.5"(updated)
  */
-function handleUserLocationUpdate(string $originalPosition, string $direction): String
+function handleUserLocationUpdate(string $originalPosition, string $direction, string $user_village): String
 {
-
   $currentUserPosition = explode('.', $originalPosition);
   /**[y0, x1] */
 
@@ -256,12 +257,25 @@ function handleUserLocationUpdate(string $originalPosition, string $direction): 
         break;
     }
   } catch (Exception $e) {
-    $errors['move_error'] = $e;
+    $errors['move_error'] = $e; //oh this will never reach...
   }
 
-  $newPos = $currentUserPosition[0] . '.' . $currentUserPosition[1];
+  $newPos = $currentUserPosition[0] . '.' . $currentUserPosition[1]; //Combining result array -> String
 
-  return $newPos;
+  //todo: hardcoded village/positions - would prob be better to not have this hard coded 
+  $village_positions = array ( '5.3', '17.2', '9.6', '3.8', '16.10' );
+  $village_names = array ('Stone', 'Cloud', 'Leaf', 'Sand', 'Mist');
+
+  //check if user is about to enter a village tile
+  for($i = 0; $i < count($village_positions); $i++){
+    if($newPos === $village_positions[$i]){
+      if($user_village != $village_names[$i]){
+       return $originalPosition;
+      }
+    }
+  }
+
+  return $newPos; //new position
 }
 
 /**************FUNCTIONS */

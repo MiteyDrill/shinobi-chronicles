@@ -2,7 +2,7 @@ import { MapSquare } from "./MapSquare.js";
 
 class TravelComponent extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -11,17 +11,17 @@ class TravelComponent extends React.Component {
       playerVillage: 'none',
       userPosition: '0.0',
       userPosition_x: 0,
-      userPosition_y: 0
+      userPosition_y: 0,
     }
   }
 
-  componentDidMount(){
-    //get json data
+  componentDidMount() {
+    //Init API Call
     this.getTravelJSONData();
-    // this.updateTravelDB();
   }
 
-  updateTravelDB(direction: String = 'none'){
+  //Moves Player | Calls API
+  updateTravelDB(direction: String = 'none') {
 
     let travelDirection = 'none';
 
@@ -29,19 +29,19 @@ class TravelComponent extends React.Component {
       case 'north': {
         travelDirection = 'north';
       }
-      break;
+        break;
       case 'south': {
         travelDirection = 'south';
       }
-      break;
+        break;
       case 'east': {
         travelDirection = 'east';
       }
-      break;
+        break;
       case 'west': {
         travelDirection = 'west';
       }
-      break;
+        break;
       default: {
         travelDirection = 'none';
       }
@@ -50,30 +50,30 @@ class TravelComponent extends React.Component {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify( { 
+      body: JSON.stringify({
         request: 'TravelComponent.js',
         current_player_id: this.state.playerID,
-        action: (travelDirection == 'none' ? '' : travelDirection), 
-      } )
+        action: (travelDirection == 'none' ? '' : travelDirection),
+      })
     };
 
     fetch(
       "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php",
       requestOptions
     ).
-    then((json) => {
-      return json.json();
-    }).then((data) => {
-      /**Data Recieved do something */
-      this.setState({playerID: data['area_data']['current_user'][1]['user_id']});
+      then((json) => {
+        return json.json();
+      }).then((data) => {
+        /**Data Recieved do something */
+        this.setState({ playerID: data['area_data']['current_user'][1]['user_id'] });
 
-      console.log("Travel Component Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
+        console.log("Travel Component Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
 
-    }).catch((e)=>{console.log("Travel Component Error: " + e)})     
-    
+      }).catch((e) => { console.log("Travel Component API CALL Error: " + e) })
+
   }
 
-  //syntax is used so this. keywork will work
+  //syntax is used so this.updateTravelDB keywork will work
   moveNorth = () => {
     this.updateTravelDB('north');
   }
@@ -90,43 +90,42 @@ class TravelComponent extends React.Component {
     this.updateTravelDB('west');
   }
 
-  getTravelJSONData(){
-
-    setInterval( () => {
+  getTravelJSONData() {
+    setInterval(() => {
 
       let headers = {
         "Content-Type": "application/json",
       }
-  
+
       fetch(
         "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php"
       ).
-      then((json) => {
-        return json.json();
-      }).then((data) => {
+        then((json) => {
+          return json.json();
+        }).then((data) => {
 
-        /*Set recieved JSON data */
+          /*Set recieved JSON data */
 
-        this.setState({playerID: data['area_data']['current_user'][1]['user_id']}); //recieving this in 2 functions
-  
-        this.setState({mapVillageData: data['map_data']['village_positions']});
-        this.setState({playerVillage: data['area_data']['current_user'][0]['village']});
-        this.setState({userPosition: data['area_data']['current_user'][0]['location']});
-        this.setState({userPosition_x: data['area_data']['current_user'][0]['x_pos']});
-        this.setState({userPosition_y: data['area_data']['current_user'][0]['y_pos']});
-  
-      }).catch((e)=>{console.log("Travel Component Error: " + e)})
+          this.setState({ playerID: data['area_data']['current_user'][1]['user_id'] }); //recieving this in 2 functions
 
-    }, 300);
+          this.setState({ mapVillageData: data['map_data']['village_positions'] });
+          this.setState({ playerVillage: data['area_data']['current_user'][0]['village'] });
+          this.setState({ userPosition: data['area_data']['current_user'][0]['location'] });
+          this.setState({ userPosition_x: data['area_data']['current_user'][0]['x_pos'] });
+          this.setState({ userPosition_y: data['area_data']['current_user'][0]['y_pos'] });
+
+        }).catch((e) => { console.log("Travel Component Init API Call Error: " + e) })
+
+    }, 600);
 
   }
 
 
   /**
-  * return true/false if player is at same position
+  * return true/false if player is at [x, y] position: Meant for MapSquare component
   */
-  isPlayerHere(x, y){
-    if(this.state.userPosition_x == x && this.state.userPosition_y == y){
+  isPlayerHere(x, y) {
+    if (this.state.userPosition_x == x && this.state.userPosition_y == y) {
       return true;
     } else {
       return false;
@@ -135,9 +134,13 @@ class TravelComponent extends React.Component {
 
 
   /**
-  * returns cooresponding village data in an object
+  * Return Object with Tile Information, meant for MapSquare component.
+  * 
+  * @param Array map_position
+  * 
+  * @return Object: Example = {'tile': 'default'}
   */
-  getTileInfo(map_position: array): array{
+  getTileInfo(map_position: array): Object {
 
     //due to array logic
     var offset = 1;
@@ -152,9 +155,9 @@ class TravelComponent extends React.Component {
     ];
 
     //if Village Position == current map position (return {village_data})
-    for(var i = 0; i < this.state.mapVillageData.length; i++){
+    for (var i = 0; i < this.state.mapVillageData.length; i++) {
 
-      if(this.state.mapVillageData[i][0] == map_position[1]+offset && this.state.mapVillageData[i][1] == map_position[0]+offset){
+      if (this.state.mapVillageData[i][0] == map_position[1] + offset && this.state.mapVillageData[i][1] == map_position[0] + offset) {
         return {
           'tile': 'village',
           'village_name': village_names[i]
@@ -169,29 +172,50 @@ class TravelComponent extends React.Component {
   }
 
 
-  //returns array of jsx elements
-  renderMap(x, y): array{
+  /**
+   * Renders the Map on screen
+   * 
+   */
+  renderMap(x, y): array {
 
+    //todo: can probably delete this
     //current user pos
-    let currentUserPosition = [3,3]; //test pos
+    let currentUserPosition = [3, 3]; //test pos 
 
     let rows = [];
     //loop creates jsx and pushes them to [rows]
-    for(var i = 0; i < x; i++){
+    for (var i = 0; i < x; i++) {
       let data = [];
-      for(var j = 0; j < y; j++){
+      for (var j = 0; j < y; j++) {
         data.push(
-          <MapSquare key={j} playerVillage={this.state.playerVillage} isPlayerHere={ this.isPlayerHere(j+1, i+1) } tileData={this.getTileInfo( [i, j] )}/>
+          <MapSquare key={j} playerVillage={this.state.playerVillage} isPlayerHere={this.isPlayerHere(j + 1, i + 1)} tileData={this.getTileInfo([i, j])} />
         );
       }
-      rows.push(<tr key={i}>{data}</tr>);
+      rows.push(<tr key={'${i}.${j}'}>{data}</tr>);
     }
 
     //returning map
     return rows;
   }
 
-  render(){
+  render() {
+
+    const mapStyle = {
+      margin: '50px auto', 
+      border: "1px solid #000", 
+      borderCollapse: "collapse", 
+      borderSpacing: "0", 
+      borderRadius: "0"
+    }
+
+    const travelButtonStyle = {
+      position: 'absolute',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderColor: 'rgba(0,0,0,0)',
+      background: 'rgba(0, 0, 0, 0.1)'
+    }
 
     //MAP SIZE
     var mapSize_x = 12;
@@ -199,8 +223,7 @@ class TravelComponent extends React.Component {
 
     return (
       <div id='content'>
-        <table id='table' className='map'
-        style={{padding:0, border: "1px solid #000", borderCollapse:"collapse", borderSpacing:"0", borderRadius:"0"}}>
+        <table style={mapStyle} id='table' className='map'>
           <thead>
             <tr>
               <th colSpan='18'>Your Location {this.state.userPosition}</th>
@@ -212,19 +235,22 @@ class TravelComponent extends React.Component {
 
           </tbody>
         </table>
-        <button onClick={this.moveEast}>
-          east
-        </button>
-        <button onClick={this.moveNorth}>
-          north
-        </button>
-        <button onClick={this.moveSouth}>
-          south
-        </button>
-        <button onClick={this.moveWest}>
-          west
-        </button>
+        <a style={travelButtonStyle} class='east travelButton' onClick={this.moveEast}>
+          <div class='rightArrow'></div>
+        </a>
+        <a style={travelButtonStyle} class='north travelButton' onClick={this.moveNorth}>
+          <div class='upArrow'></div>
+        </a>
+        <a style={travelButtonStyle} class='south travelButton' onClick={this.moveSouth}>
+          <div class='downArrow'></div>
+        </a>
+        <a style={travelButtonStyle} class='west travelButton' onClick={this.moveWest}>
+          <div class='leftArrow'></div>
+        </a>
+
       </div>
+
+      
     )
   }
 

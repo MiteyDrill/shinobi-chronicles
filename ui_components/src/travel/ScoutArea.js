@@ -13,9 +13,10 @@ class ScoutArea extends React.Component {
 
   setUserListDataInterval(){
     /*Not sure if this is a good way to impliment this*/
-    /*Slow network will add a large stack of back calls to display*/
-    /*From what I can see on the Network panel on the chrome dev tools*/
     let headers = new Headers();
+
+    //interval call (milliseconds)
+    const callTime = 600;
 
     /*Not sure if these headers actually do anything?*/
     headers.append('Content-Type', 'application/json');
@@ -42,9 +43,9 @@ class ScoutArea extends React.Component {
 
 
         }).catch((e) => {
-            console.log("Error: " + e);
+            console.log("API Error: " + e);
         })
-      }, 600);
+      }, callTime);
   }
 
   componentDidMount(){
@@ -60,12 +61,12 @@ class ScoutArea extends React.Component {
     }
   }
 
-  displayUserAction(village, location, rank, battleId){
+  displayUserAction(village, location, rank, userId , battleId){
     if(battleId != '0'){
       return 'In Battle!';
     } else if (this.state.currentUser_village != village && this.state.currentUser_location == location && this.state.currentUser_rank == rank){
       return (
-        <a href={item['attack_link'] + '&attack=' + item['user_id']}>
+        <a href={'&attack=' + userId}>
           Attack
         </a>
       )
@@ -94,7 +95,7 @@ class ScoutArea extends React.Component {
 
           {/*Create This Dynamically*/}
           {
-          this.state.userList.map(item =>
+          this.state.userList.map( (item) =>
             <tr style={{textAlign: 'center'}} className='table_multicolumns' id={item['user_name']} key={item['user_name']}>
 
               <td>
@@ -113,7 +114,7 @@ class ScoutArea extends React.Component {
               <td>{item['location']}</td>
 
               <td>
-                {this.displayUserAction(item['village'], item['location'], item['rank'], item['battle_id'])}
+                {this.displayUserAction(item['village'], item['location'], item['rank'], item['user_id'], item['battle_id'])}
               </td>
 
             </tr>
