@@ -223,7 +223,7 @@ function travel() {
 
 	<div id='scout_container'></div>
 
-	<script type='module' src='./ui_components/build/travel/ScoutArea.js'></script>
+	<script type='module' src='./ui_components/build/travel/ScoutAreaComponent.js'></script>
 	<script type='module' src='./ui_components/build/travel/TravelComponent.js'></script>
 
 	<script type='text/javascript'>
@@ -236,7 +236,7 @@ function travel() {
 
 	window.addEventListener('load', () => {
 		ReactDOM.render(
-				React.createElement(ScoutArea, {}),
+				React.createElement(ScoutAreaComponent, {}),
 				document.querySelector(\"#scout_container\")
 		);
 	})

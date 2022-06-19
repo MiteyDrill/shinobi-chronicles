@@ -20,8 +20,11 @@ class TravelComponent extends React.Component {
     this.getTravelJSONData();
   }
 
-  //Moves Player | Calls API
-  updateTravelDB(direction: String = 'none') {
+  /**
+   * 
+   * @param string direction 
+   */
+  updateTravelDB(direction = 'none') {
 
     let travelDirection = 'none';
 
@@ -52,20 +55,19 @@ class TravelComponent extends React.Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         request: 'TravelComponent.js',
-        current_player_id: this.state.playerID,
         action: (travelDirection == 'none' ? '' : travelDirection),
       })
     };
 
     fetch(
-      "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php",
+      "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php",
       requestOptions
     ).
       then((json) => {
         return json.json();
       }).then((data) => {
         /**Data Recieved do something */
-        this.setState({ playerID: data['area_data']['current_user'][1]['user_id'] });
+        this.setState({ playerID: data['response']['current_player_id'] });
 
         console.log("Travel Component Errors: " + ((data['errors'].length) ? data['errors'] : 'No errors'));
 
@@ -98,7 +100,7 @@ class TravelComponent extends React.Component {
       }
 
       fetch(
-        "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/scoutArea.php"
+        "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php"
       ).
         then((json) => {
           return json.json();
@@ -106,9 +108,10 @@ class TravelComponent extends React.Component {
 
           /*Set recieved JSON data */
 
-          this.setState({ playerID: data['area_data']['current_user'][1]['user_id'] }); //recieving this in 2 functions
+          console.log(data);
 
-          this.setState({ mapVillageData: data['map_data']['village_positions'] });
+          this.setState({ playerID: data['response']['current_player_id'] }); 
+
           this.setState({ playerVillage: data['area_data']['current_user'][0]['village'] });
           this.setState({ userPosition: data['area_data']['current_user'][0]['location'] });
           this.setState({ userPosition_x: data['area_data']['current_user'][0]['x_pos'] });
@@ -140,7 +143,7 @@ class TravelComponent extends React.Component {
   * 
   * @return Object: Example = {'tile': 'default'}
   */
-  getTileInfo(map_position: array): Object {
+  getTileInfo(map_position){
 
     //due to array logic
     var offset = 1;
@@ -175,8 +178,9 @@ class TravelComponent extends React.Component {
   /**
    * Renders the Map on screen
    * 
+   * @return returns array of MapSquareComponents
    */
-  renderMap(x, y): array {
+  renderMap(x, y) {
 
     //todo: can probably delete this
     //current user pos
