@@ -117,7 +117,6 @@ $user_list = array();
 $ScoutComponentAPI = new ScoutComponentAPI($player, $system);
 
 /*Get Current Player Data*/ 
-/**TODO: For some reason Auth::getUserFromSession() doesn't return full user data*/
 $u_query = $system->query("SELECT `village`, `stealth`, `location`, `rank` FROM `users` WHERE `user_id` = {$player->user_id}");
 if ($system->db_last_num_rows == 0) {
    $ScoutComponentAPI->addError("Could not get current user variables");
@@ -219,7 +218,7 @@ $ScoutComponentAPI->addData($player->user_id, 'current_player_id');
 $ScoutComponentAPI->addData($personal_user, 'current_user_data');
 $ScoutComponentAPI->addData($user_list, 'active_user_list');
 
-
+//Display JSON output
 $ScoutComponentAPI->JSON_RESPONSE();
 
 exit();

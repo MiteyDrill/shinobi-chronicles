@@ -5,24 +5,27 @@ class MapSquare extends React.Component {
   }
 
   //return style
-  getStyle(tile_data){
-    if(tile_data['tile'] == 'default'  && this.props.isPlayerHere){
+  getStyle(tile_data, playerIsHere, player_village_name){
+
+    const village_name = tile_data['village_name'];
+
+    if(tile_data['tile'] == 'default'  && playerIsHere){
       return {
-        backgroundColor: 'black'
+        backgroundColor: 'black' /**PLAYER ICON LINK SHOULD GO HERE */
       };
-    } else if(tile_data['tile'] == 'village' && this.props.isPlayerHere){
+    } else if(tile_data['tile'] == 'village' && playerIsHere){
       return {
-        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundImage: 'url(./images/village_icons/' + tile_data['village_name'] + '.png',
         backgroundColor: '#000'
       }
-    } else if (tile_data['tile'] == 'village' && this.props.playerVillage.toLowerCase() == tile_data['village_name']) {
+    } else if (tile_data['tile'] == 'village' && tile_data['village_name'] == player_village_name) {
       return {
-        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundImage: 'url(./images/village_icons/' + tile_data['village_name'] + '.png',
         backgroundColor: 'yellow'
       }
     } else if (tile_data['tile'] == 'village') {
       return {
-        backgroundImage: 'url(./images/village_icons/'+tile_data['village_name']+'.png',
+        backgroundImage: 'url(./images/village_icons/' + tile_data['village_name'] + '.png',
         backgroundColor: '#999'
       }
     }
@@ -34,7 +37,7 @@ class MapSquare extends React.Component {
   render(){
 
     return (
-      <td style={this.getStyle(this.props.tileData)}></td>
+      <td style={this.getStyle(this.props.tileData, this.props.isPlayerHere, this.props.playerVillage)}></td>
     )
   }
 

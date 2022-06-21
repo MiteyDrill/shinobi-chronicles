@@ -12,6 +12,7 @@ class TravelComponent extends React.Component {
       userPosition: '0.0',
       userPosition_x: 0,
       userPosition_y: 0,
+      village_position_data: ['no data'],
     }
   }
 
@@ -21,6 +22,7 @@ class TravelComponent extends React.Component {
   }
 
   /**
+   * Function makes sends FETCH request to TravelComponent API and then UPDATES STATE
    * 
    * @param string direction 
    */
@@ -66,6 +68,7 @@ class TravelComponent extends React.Component {
       then((json) => {
         return json.json();
       }).then((data) => {
+
         /**Data Recieved do something */
         this.setState({ playerID: data['response']['current_player_id'] });
 
@@ -75,7 +78,8 @@ class TravelComponent extends React.Component {
 
   }
 
-  //syntax is used so this.updateTravelDB keywork will work
+
+  //Button Functions
   moveNorth = () => {
     this.updateTravelDB('north');
   }
@@ -92,6 +96,8 @@ class TravelComponent extends React.Component {
     this.updateTravelDB('west');
   }
 
+
+  //initial fetch request on component startup 
   getTravelJSONData() {
     setInterval(() => {
 
@@ -108,14 +114,14 @@ class TravelComponent extends React.Component {
 
           /*Set recieved JSON data */
 
-          console.log(data);
 
-          this.setState({ playerID: data['response']['current_player_id'] }); 
-
-          this.setState({ playerVillage: data['area_data']['current_user'][0]['village'] });
-          this.setState({ userPosition: data['area_data']['current_user'][0]['location'] });
-          this.setState({ userPosition_x: data['area_data']['current_user'][0]['x_pos'] });
-          this.setState({ userPosition_y: data['area_data']['current_user'][0]['y_pos'] });
+          //current player variables
+          this.setState({ playerID: data['response']['current_player_id'] })
+          this.setState({ playerVillage: data['response']['village'] });
+          this.setState({ userPosition: data['response']['position'] });
+          this.setState({ userPosition_x: data['response']['pos_x'] });
+          this.setState({ userPosition_y: data['response']['pos_y'] });
+          this.setState({ village_position_data: data['response']['village_locations']});
 
         }).catch((e) => { console.log("Travel Component Init API Call Error: " + e) })
 
@@ -127,8 +133,8 @@ class TravelComponent extends React.Component {
   /**
   * return true/false if player is at [x, y] position: Meant for MapSquare component
   */
-  isPlayerHere(x, y) {
-    if (this.state.userPosition_x == x && this.state.userPosition_y == y) {
+  isPlayerHere(x, y, player_position_x, player_position_y) {
+    if (player_position_x == x && player_position_y == y) {
       return true;
     } else {
       return false;
@@ -143,24 +149,37 @@ class TravelComponent extends React.Component {
   * 
   * @return Object: Example = {'tile': 'default'}
   */
-  getTileInfo(map_position){
+  getTileInfo(map_position, village_position_data: array) {
 
     //due to array logic
     var offset = 1;
 
     /*hardcoded villages according to the positions*/
     var village_names = [
-      'stone',
-      'cloud',
-      'leaf',
-      'sand',
-      'mist'
+      'Stone',
+      'Cloud',
+      'Leaf',
+      'Sand',
+      'Mist'
     ];
 
-    //if Village Position == current map position (return {village_data})
-    for (var i = 0; i < this.state.mapVillageData.length; i++) {
+    let village_positions = [];
 
-      if (this.state.mapVillageData[i][0] == map_position[1] + offset && this.state.mapVillageData[i][1] == map_position[0] + offset) {
+    for(const village in village_position_data){
+      village_positions.push(village);
+    }
+
+    map_position[0]++;
+    map_position[1]++;
+
+    map_position.reverse();
+
+    let tile_position = map_position.join(".");
+
+    //if Village Position == current map position (return {village_data})
+    for (var i = 0; i < village_positions.length; i++) {
+
+      if (village_positions[i] === tile_position) {
         return {
           'tile': 'village',
           'village_name': village_names[i]
@@ -180,35 +199,38 @@ class TravelComponent extends React.Component {
    * 
    * @return returns array of MapSquareComponents
    */
-  renderMap(x, y) {
+  renderMap(x, y, player_village_position, player_position_x, player_position_y, player_village_name) {
 
-    //todo: can probably delete this
-    //current user pos
-    let currentUserPosition = [3, 3]; //test pos 
-
+    //populates map
     let rows = [];
-    //loop creates jsx and pushes them to [rows]
+
     for (var i = 0; i < x; i++) {
       let data = [];
       for (var j = 0; j < y; j++) {
         data.push(
-          <MapSquare key={j} playerVillage={this.state.playerVillage} isPlayerHere={this.isPlayerHere(j + 1, i + 1)} tileData={this.getTileInfo([i, j])} />
+          < MapSquare
+            key={`${i}.${j}`}
+            playerVillage={player_village_name}
+            isPlayerHere={this.isPlayerHere(j + 1, i + 1, player_position_x, player_position_y)}
+            tileData={ this.getTileInfo([i, j], player_village_position) }
+            
+          />
         );
       }
-      rows.push(<tr key={'${i}.${j}'}>{data}</tr>);
+      //i don't even know
+      rows.push(<tr key={`${i}.${i}.${j}`}>{data}</tr>);
     }
 
-    //returning map
     return rows;
   }
 
   render() {
 
     const mapStyle = {
-      margin: '50px auto', 
-      border: "1px solid #000", 
-      borderCollapse: "collapse", 
-      borderSpacing: "0", 
+      margin: '50px auto',
+      border: "1px solid #000",
+      borderCollapse: "collapse",
+      borderSpacing: "0",
       borderRadius: "0"
     }
 
@@ -235,26 +257,34 @@ class TravelComponent extends React.Component {
           </thead>
           <tbody>
 
-            {this.renderMap(mapSize_x, mapSize_y)}
+            {
+              this.renderMap(
+                mapSize_x, mapSize_y,
+                this.state.village_position_data,
+                this.state.userPosition_x,
+                this.state.userPosition_y,
+                this.state.playerVillage
+              )
+            }
 
           </tbody>
         </table>
-        <a style={travelButtonStyle} class='east travelButton' onClick={this.moveEast}>
-          <div class='rightArrow'></div>
+        <a style={travelButtonStyle} className='east travelButton' onClick={this.moveEast}>
+          <div className='rightArrow'></div>
         </a>
-        <a style={travelButtonStyle} class='north travelButton' onClick={this.moveNorth}>
-          <div class='upArrow'></div>
+        <a style={travelButtonStyle} className='north travelButton' onClick={this.moveNorth}>
+          <div className='upArrow'></div>
         </a>
-        <a style={travelButtonStyle} class='south travelButton' onClick={this.moveSouth}>
-          <div class='downArrow'></div>
+        <a style={travelButtonStyle} className='south travelButton' onClick={this.moveSouth}>
+          <div className='downArrow'></div>
         </a>
-        <a style={travelButtonStyle} class='west travelButton' onClick={this.moveWest}>
-          <div class='leftArrow'></div>
+        <a style={travelButtonStyle} className='west travelButton' onClick={this.moveWest}>
+          <div className='leftArrow'></div>
         </a>
 
       </div>
 
-      
+
     )
   }
 
