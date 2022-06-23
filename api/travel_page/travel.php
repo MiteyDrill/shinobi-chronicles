@@ -141,8 +141,11 @@ if (isset($_SERVER['REQUEST_METHOD'])) {
 
     $TravelComponentAPI->addData($newLocation, 'updated_location');
 
-    //db update
+    //db update TODO: Prepared Statement
+
+    $current_time = time();
     $u_query = $system->query("UPDATE `users` SET `location` = {$newLocation} WHERE `user_id` = {$player->user_id}");
+    $u_query = $system->query("UPDATE `users` SET `last_active` = {$current_time} WHERE `user_id` = {$player->user_id}");
   } else {
     $TravelComponentAPI->addError("POST Headers/Data were not set");
   }

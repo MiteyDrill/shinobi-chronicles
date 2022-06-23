@@ -62,7 +62,7 @@ class TravelComponent extends React.Component {
     };
 
     fetch(
-      "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php",
+      "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php", //**TODO: Change this link */
       requestOptions
     ).
       then((json) => {
@@ -106,7 +106,7 @@ class TravelComponent extends React.Component {
       }
 
       fetch(
-        "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php"
+        "http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/travel.php" /**TODO: Change this Link */
       ).
         then((json) => {
           return json.json();

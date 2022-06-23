@@ -21,13 +21,13 @@ abstract class TravelPageAPIHandler
 
     private $methodUsed = self::GET_METHOD_USED;
 
-    protected array $errors = []; //general error containers
-    protected array $response_data = []; //container for holding active users information
-    protected array $current_user_data = []; //container for holding the current players information
+    //general containers
+    protected array $errors = [];
+    protected array $response_data = []; 
+    protected array $current_user_data = [];
 
     /** FUNCTIONS **/
 
-    //adds message to error container
     public function pushError(String $error, String $key = ''){
         //Keys being overwritten could cause issue in the future...
         // ($key === '') ? $key = count($this->errors) : $key = $key; //if no key set increment | otherwise overwrite old key 
@@ -39,7 +39,6 @@ abstract class TravelPageAPIHandler
     //There should be a better way of doing this
     public function addData(Mixed $data, String $array_key): void{
 
-        //this will rewrite any keys already set might cause issues in future
         if(array_key_exists($array_key, $this->response_data)){
             $this->response_data[$array_key] = $data;
             $this->errors[] = "Key was written over, please check for any errors";
@@ -48,6 +47,7 @@ abstract class TravelPageAPIHandler
 
         $this->response_data[$array_key] = $data;
     }
+    
     /** FUNCTIONS **/
 
     //GET | SET
