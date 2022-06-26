@@ -191,5 +191,6 @@ function marriage() {
     if($system->message && !$system->message_displayed) {
         $system->printMessage();
     }
+    
     require 'templates/marriage.php';
 }
