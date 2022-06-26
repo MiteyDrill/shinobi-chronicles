@@ -154,7 +154,7 @@ class TravelComponent extends React.Component {
     //due to array logic
     var offset = 1;
 
-    /*hardcoded villages according to the positions*/
+    /*TODO: hardcoded village data should be updated dynamically*/
     var village_names = [
       'Stone',
       'Cloud',
@@ -188,6 +188,7 @@ class TravelComponent extends React.Component {
 
     }
 
+    //default tile state || todo: change this to a class perhaps?
     return {
       'tile': 'default',
     };

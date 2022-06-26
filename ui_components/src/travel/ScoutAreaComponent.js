@@ -63,8 +63,8 @@ class ScoutAreaComponent extends React.Component {
     }
   }
 
-  onClickAttackLinkHandler = () => {
-    window.open("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/?id=11&attack=" + this.state.currentUserData['user_id'], "_self");
+  onClickAttackLinkHandler = (e, battleId) => {
+    window.open("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/?id=19&attack=" + battleId, "_self");
   }
 
   displayUserAction(village, location, rank, userId, battleId) {
@@ -72,7 +72,7 @@ class ScoutAreaComponent extends React.Component {
       return 'In Battle!';
     } else if (this.state.currentUser_village != village && this.state.currentUser_location == location && this.state.currentUser_rank == rank) {
       return (
-        <a style={{cursor: 'pointer'}} onClick={this.onClickAttackLinkHandler}> {/**TODO: Not sure why this isn't working */}
+        <a style={{cursor: 'pointer'}} onClick={ e => this.onClickAttackLinkHandler(e, userId)}>
           Attack
         </a>
       )
