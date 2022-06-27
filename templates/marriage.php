@@ -140,4 +140,6 @@
         </tr>
     </table>
 
+    <script type='module' src='scripts/family-tree/FamilyTree.js'></script>
+
 </table>
