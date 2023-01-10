@@ -1,23 +1,6 @@
 <?php
 
-//Regarding the Interfaces, I was meant to split the SenseiManager into two.
-//I'm thinking about using a SenseiManagerFactory to handle whether the USER is a Student or a Teacher and have different classes to manage different functions but I think i'll do that later. I'm still learning about Factory implimentation. 
-
-interface Student{
-    public function getMySenseisID(): int|null;
-    public function setMySenseisIDinDB(Int $id): void;
-    public function deleteMySenseisID(int $id): void;
-    public function addToMySenseiSkillAmount(int $amount): void;
-    public function checkIfRegisteredStudent(): bool;
-
-}
-
-interface Sensei{
-    public function getStudentInformation(): array;
-    public function setStudentIDS(array $ids): void;
-    public function deleteStudentID(int $id): void;
-    public function checkIfRegisteredSensei(): bool;
-}
+require_once('SenseiManager_Interfaces.php');
 
 /**
  * SenseiManager Handles Database(DB) interaction from within the USER object regarding all Sensei/Student interaction such as Registration/Deletion.
@@ -168,7 +151,18 @@ class SenseiManager implements Sensei, Student{
      */
     private function insertNewSenseiDataIntoDB(int $user_id, string $user_name, string $user_village){
         $this->system->query("INSERT INTO `sensei_list` (`sensei_id`, `assoc_user_id`, `teaching_village`, `sensei_name`, `isTeamFull`, `student_list`, `teaching_boost_amount`, `sensei_skill`)
-        VALUES ('0', '{$user_id}', '{$user_village}', '{$user_name}', '0', '" . json_encode([]) . "', '$this->default_teacher_boost_amount', '0')");
+        VALUES (
+            '0', 
+            '{$user_id}', 
+            '{$user_village}', 
+            '{$user_name}', 
+            '0', 
+            '" . json_encode([
+                "names" => []
+             ]) . "', 
+            '$this->default_teacher_boost_amount', 
+            '0'
+        )");
 
         $this->system->query("UPDATE users SET isRegisteredSensei = 1 WHERE user_id = ${user_id}");
     }
@@ -206,34 +200,34 @@ class SenseiManager implements Sensei, Student{
 	 */
 	public function getStudentInformation(): array {
 
-        // $result = $this->system->query("SELECT `student_list` from `sensei_list` WHERE `assoc_user_id`='$this->user_id' LIMIT 1");
-        // $studentList = $this->system->db_fetch($result);
+        $result = $this->system->query("SELECT `student_list` from `sensei_list` WHERE `assoc_user_id`='$this->user_id' LIMIT 1");
+        $studentList = $this->system->db_fetch($result);
 
-        // //if sensei_id is found
-        // if($this->system->db_last_num_rows != 0){
-        //     $studentList = $studentList['student_list'];
+        //if sensei_id is found
+        if($this->system->db_last_num_rows != 0){
+            $studentList = $studentList['student_list'];
 
-        //     return json_decode($studentList, true); //array
-        // }   
+            return json_decode($studentList, true); //array
+        }   
         
-        // return []; //default
+        return []; //default
 
-        
-        return json_decode('{
-            "names": 
-                [
-                    {"name": "Educba", "rank": "1", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"},
-                    {"name": "Snehal", "rank" : "2", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"},
-                    {"name": "Amardeep", "rank" : "1", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"}
-                ]
-            }', true ); //Saving this here for testing
+        // //Default Format
+        // return json_decode('{
+        //     "names": 
+        //         [
+        //             {"name": "Educba", "rank": "1", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"},
+        //             {"name": "Snehal", "rank" : "2", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"},
+        //             {"name": "Amardeep", "rank" : "1", "village": "default_village", "skill_points_earned": "0", "avatar_link": "./images/default_avatar.png"}
+        //         ]
+        //     }', true ); //Saving this here for testing
 	}
 	
 	/**
 	 *
 	 * @param array $ids
 	 */
-	public function setStudentIDS(array $ids): void {
+	public function addStudentIDS(array $ids): void {
 	}
 	
 	/**
