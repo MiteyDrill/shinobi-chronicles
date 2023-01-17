@@ -21,11 +21,11 @@ class ScoutAreaComponent extends React.Component {
     /*Not sure if these headers actually do anything?*/
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
-    headers.append('Origin', 'http://192.168.1.122');
+    headers.append('Origin', 'http://192.168.1.122'); {/**TODO: Change this Link */}
 
     setInterval(
       () => {
-        fetch("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/scout.php", {
+        fetch("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/api/travel_page/scout.php", {/**TODO: Change this link */
           method: 'GET',
           headers: headers,
         })
@@ -33,13 +33,13 @@ class ScoutAreaComponent extends React.Component {
             return data.json();
           }).then((json) => {
 
-            console.log(json);
+            // console.log(json);
 
-            this.setState({ userList: json['area_data']['users'] })
-            this.setState({ currentUserData: json['area_data']['current_user'] })
-            this.setState({ currentUser_village: json['area_data']['current_user'][0]['village'] });
-            this.setState({ currentUser_location: json['area_data']['current_user'][0]['location'] });
-            this.setState({ currentUser_rank: json['area_data']['current_user'][0]['rank'] });
+            this.setState({ userList: json['response']['active_user_list'] })
+            this.setState({ currentUserData: json['response']['current_user_data'] })
+            this.setState({ currentUser_village: json['response']['current_user_data']['village'] });
+            this.setState({ currentUser_location: json['response']['current_user_data']['location'] });
+            this.setState({ currentUser_rank: json['response']['current_user_data']['rank'] });
 
             console.log("Scout Component Errors: " + ((json['errors'].length) ? json['errors'] : 'No errors'));
 
@@ -63,12 +63,16 @@ class ScoutAreaComponent extends React.Component {
     }
   }
 
+  onClickAttackLinkHandler = () => {
+    window.open("http://192.168.1.122/shinobi-chronicles2/shinobi-chronicles/?id=11&attack=" + this.state.currentUserData['user_id'], "_self");
+  }
+
   displayUserAction(village, location, rank, userId, battleId) {
     if (battleId != '0') {
       return 'In Battle!';
     } else if (this.state.currentUser_village != village && this.state.currentUser_location == location && this.state.currentUser_rank == rank) {
       return (
-        <a href={'&attack=' + userId}>
+        <a style={{cursor: 'pointer'}} onClick={this.onClickAttackLinkHandler}> {/**TODO: Not sure why this isn't working */}
           Attack
         </a>
       )
