@@ -95,7 +95,9 @@ let marriages = [
         setFillStyle("white");
     }
 
-    const distance = 60 + 20 * depth;
+    //IMPORTANT
+    //Mess with these mess with width
+    const distance = 15 + 35 * generation_depth;
 
     //draw
     ctx.fillText("parent"+id, x, y); //draw parent
