@@ -541,3 +541,20 @@ $clan_positions = [
         }, 1000);
     </script>
 </div>
+
+<!--Populate Family Table-->
+<?php if(true): ?>
+    <div class='contentDiv'>
+        <div class='contentDivHeader'>Family Tree</div>
+
+        <div style = "height: 712.5px; width: 712.5px;">
+            <!--Family tree Content-->
+            <canvas id="familytree" height=712.5px width=712.5>
+
+            </canvas>
+        </div>
+    </div>
+
+    <script type='text/javascript' src='./scripts/familyTree.js'></script>
+</div
+<?php endif; ?>
