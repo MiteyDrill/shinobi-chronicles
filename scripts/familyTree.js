@@ -1,7 +1,74 @@
+//Image sources are hardcoded into the class
+
+/**
+ * Image holder for rendering on marriage canvas, contains logic necessary to render profile images onto screen.
+ * Initialize, applyUserData(), draw().
+ */
+class ProfileCard {
+    constructor(x, y, width, height) {
+        this.image = new Image();
+        this.image.src = "./images/marriage_assets/person_frame.png"; //image link src
+        this.scale = 10; //bigger number smaller image
+        this.x = x; //cursor position
+        this.y = y; //cursor position
+        this.width = width; //image width
+        this.height = height; //image height
+
+        this.profileImage = new Image();
+        this.profileImageSrc = ""; //image source for profile image
+        this.username = "No Username"; //username
+        this.birthday = "No Rank" //testing
+    }
+
+    /**
+     * 
+     * @param {string} profileImageSrc 
+     * @param {string} username 
+     * @param {string} birthday 
+     */
+    applyUserData(profileImageSrc, username, birthday){
+        this.profileImageSrc = profileImageSrc;
+        this.username = username;
+        this.birthday = birthday;
+    }
+
+    /**
+     * Renders image
+     * @param {canvas} ctx canvas source
+     * @param {int} scale bigger number smaller image
+     */
+    draw(ctx, scale = this.scale){
+        this.image.onload = () => {
+
+            let w_scaled = this.image.width / scale;
+            let h_scaled = this.image.height / scale;
+
+            ctx.drawImage(this.image, this.x - w_scaled / 2, this.y - h_scaled / 2, w_scaled, h_scaled);
+
+            //this.x / this.y start at the very center of the rendered
+            ctx.fillText(this.username, this.x - 14, this.y + 15); //username
+            
+            
+            this.profileImage.src = this.profileImageSrc;
+
+            this.profileImage.onload = () => {
+                console.log("Profile image loaded");
+                ctx.drawImage(this.profileImage, this.x - 13, this.y - 19.5, 26, 26);
+            }
+        }
+    }
+}
+
+cextraProfileImageLink = "https://hosting.photobucket.com/albums/w672/linkswords10/Cextra-avy_zps2f4db921.gif";
+
 console.log("Family Tree Script Loaded");
 var canvas = document.getElementById("familytree");
 var ctx = canvas.getContext("2d");
 ctx.fillStyle = "black"; //text
+
+let asset_marriage_image = "./images/marriage_assets/person_frame.png";
+let profileFrameHeight = 465;
+let profileFrameWidth = 354;
 
 let thisUser = [
     {"id": 7, "name": "Cextra"}
@@ -27,7 +94,7 @@ let individualTable = [
     { "id": 17, "name": "Quinn", "birthdate": "1994-03-07" },
     { "id": 18, "name": "Ryan", "birthdate": "1992-06-16" },
     { "id": 19, "name": "Sophia", "birthdate": "1984-09-05" },
-    { "id": 20, "name": "Tom", "birthdate": "1972-01-24" }
+    { "id": 20, "name": "Tom", "birthdate": "1972-01-24" },
 ];
 
 
@@ -64,16 +131,26 @@ let marriages = [
 
   //for children
   let childParentRelatinoshipsTable = [
-    { "child_id": 3, "parent1_id": 30, "parent2_id": 2 },
-    { "child_id": 1, "parent1_id": 6, "parent2_id": 9 },
-    { "child_id": 5, "parent1_id": 6, "parent2_id": 9 },
+    { "child_id": 3, "parent1_id": 17, "parent2_id": 30 },
+    { "child_id": 2, "parent1_id": 5, "parent2_id": 8 }, //change child id to 7 for testing parents
+    { "child_id": 5, "parent1_id": 30, "parent2_id": 7 },
     { "child_id": 7, "parent1_id": 3, "parent2_id": 1 },
-    { "child_id": 2, "parent1_id": 6, "parent2_id": 9 },
-    { "child_id": 6, "parent1_id": 12, "parent2_id": 15 },
-    { "child_id": 12, "parent1_id": 120, "parent2_id": 30 },
-    { "child_id": 30, "parent1_id": 1210, "parent2_id": 99 },
-    { "child_id": 15    , "parent1_id": 69, "parent2_id": -2 }
-  ]
+    { "child_id": 6, "parent1_id": 10, "parent2_id": 12 },
+    { "child_id": 12, "parent1_id": 17, "parent2_id": 19 },
+    { "child_id": 15, "parent1_id": 7, "parent2_id": 16 },
+    { "child_id": 18, "parent1_id": 1232, "parent2_id": 7 },
+    { "child_id": 35, "parent1_id": 1232, "parent2_id": 20 },
+    { "child_id": 4, "parent1_id": 7, "parent2_id": 3 },
+    { "child_id": 9, "parent1_id": 50, "parent2_id": 2 },
+
+    
+    
+];
+
+// Draw the ellipse
+ctx.beginPath();
+ctx.ellipse(canvas.width / 2, canvas.height / 2 - 50, 10, 10, 0, 0, 6.28);
+ctx.stroke();
   
   //keeps track of drawing cursor
   let cursorX = 0;
@@ -87,20 +164,26 @@ let marriages = [
 
     //get some calcs
     generation_depth = 0;
-    calculateGeneration(thisID);
+    calculateParentGeneration(thisID);
 
+    //set color
     if(generation_depth == 0){
         setFillStyle("red");
     } else {
-        setFillStyle("white");
+        setFillStyle("black");
     }
 
     //IMPORTANT
     //Mess with these mess with width
+    //Update this with a graph of some sort in the future to better dictate width
     const distance = 15 + 35 * generation_depth;
 
+    let a = new ProfileCard(x, y, 256, 256);
+    a.applyUserData(cextraProfileImageLink, individualTable.find((item) => item.id == id)?.name, individualTable.find((item) => item.userID == id)?.birthdate);
+    a.draw(ctx, 10);
+
     //draw
-    ctx.fillText("parent"+id, x, y); //draw parent
+    //ctx.fillText("parent"+id, x, y); //moved to ProfileCard
 
     //left line
     if(generation_depth > 0){
@@ -136,22 +219,24 @@ let marriages = [
     ctx.fillStyle = color;
   }
   
-  function startDrawingParentTree(x = canvas.width / 2, y = canvas.height / 2) {
+  function startDrawingParentTree(userID = 0, x = canvas.width / 2, y = canvas.height / 2) {
     ctx.strokeStyle='black';
     cursorX = x;
     cursorY = y;
 
-    const rootID = thisUser[0].id;
-
-    const parentList = childParentRelatinoshipsTable.filter( (col) => col.child_id === rootID);
+    const parentList = childParentRelatinoshipsTable.filter( (col) => col.child_id === userID);
 
     generation_depth = 0;
-    calculateGeneration(rootID); //initial calculation to calculate {generation_depth} for starting width
+    calculateParentGeneration(userID); //initial calculation to calculate {generation_depth} for starting width
 
     const distance = 70 * generation_depth;
 
-    drawParent(cursorX - distance / 2, cursorY - 5, parentList[0].parent1_id, generation_depth);
-    drawParent(cursorX + distance / 2, cursorY - 5, parentList[0].parent2_id, generation_depth);
+    if(parentList[0] != undefined){
+        drawParent(cursorX - distance / 2, cursorY - 80, parentList[0].parent1_id, generation_depth);
+        drawParent(cursorX + distance / 2, cursorY - 80, parentList[0].parent2_id, generation_depth);
+    } else {
+        //console.log("No parents");
+    }
 
   }
 
@@ -159,7 +244,7 @@ let marriages = [
   //generation_depth knows how many generations the family tree goes back
   //this is used to set the initial starting width of the tree
   let generation_depth = 0;
-  function calculateGeneration(rootID, parent_depth = 0){
+  function calculateParentGeneration(rootID, parent_depth = 0){
 
     const parents = childParentRelatinoshipsTable.filter( (item) => item.child_id == rootID) //returns a table with parents
 
@@ -169,9 +254,88 @@ let marriages = [
 
     //has parents
     if(parents[0] != undefined){
-        calculateGeneration(parents[0].parent1_id, parent_depth + 1);
-        calculateGeneration(parents[0].parent2_id, parent_depth + 1);
+        calculateParentGeneration(parents[0].parent1_id, parent_depth + 1);
+        calculateParentGeneration(parents[0].parent2_id, parent_depth + 1);
     }
   }
+
+  function drawChildren(x, y, userID){
+
+    let b = new ProfileCard(x, y, 256, 256);
+    b.applyUserData(cextraProfileImageLink, individualTable.find((item) => item.id == userID)?.name, individualTable.find((item) => item.userID == userID)?.birthdate);
+    b.draw(ctx, 10);
+
+    //ctx.fillText("child"+userID, x, y); //draw parent
+
+    const childrenList = childParentRelatinoshipsTable.filter( (data) => data.parent1_id == userID || data.parent2_id == userID );
+
+    childGenerationDepth = 0;
+    calculatechildGenerations(userID);
+
+    let r = 30 + (40 * childGenerationDepth);
+    let a = childrenList.length;
+    if(a == 0) a = 1;
+    if(childrenList.length > 0){
+        calculatechildGenerations(userID); //get depth to calculate initial width
+        for(var i = 0; i < childrenList.length; i++){           
+            let formula = (x - (r / 2)) + (((r / 2) * i));
+            drawChildren(formula, y + 30, childrenList[i].child_id);
+        }
+    } else {
+        console.log("No Kids");
+    }
+
+  }
+
+  //Children Function
+  function startDrawingChildrenTree(userID, x = canvas.width / 2, y = canvas.height / 2){
+
+    const childrenList = childParentRelatinoshipsTable.filter( (data) => data.parent1_id == userID || data.parent2_id == userID );
+
+    console.log(x, y);
+   
+    let r = 300; //desired distance
+    let a = childrenList.length; //amount of children
+    if(childrenList.length > 0){
+        calculatechildGenerations(userID); //get depth to calculate initial width
+        for(var i = 0; i < childrenList.length; i++){
+            
+            let formula = x - (r / 2) + ((r/a * i));
+            drawChildren(formula, y + 5, childrenList[i].child_id);
+        }
+    } else {
+        console.log("No Kids");
+    }
+
+  }
+
+
+let calls = 0;
+let childGenerationDepth = 0;
+function calculatechildGenerations(rootID, childDepth = 0){
+    calls++;
+    if(calls > 800) {
+        console.log("Max calls reached...");
+        return;
+    };
+
+    if(childDepth > childGenerationDepth){
+        childGenerationDepth = childDepth;
+    }
+
+    const childrenList = childParentRelatinoshipsTable.filter( (data) => data.parent1_id == rootID || data.parent2_id == rootID );
+
+    if(childrenList.length > 0){
+        for(var i = 0; i < childrenList.length; i++){
+            let name = individualTable.find((item) => item.id == childrenList[i].child_id).name;
+            calculatechildGenerations(childrenList[i].child_id, childDepth + 1);
+        }
+    } 
+}
   
-  startDrawingParentTree();
+//Init
+
+window.addEventListener('load', function () {
+    startDrawingParentTree(7);
+    startDrawingChildrenTree(7);
+  })
